@@ -9,7 +9,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
 // POST /login
 func LoginByTeacher(c *gin.Context) {
 	var payload LoginPayload
@@ -52,9 +51,8 @@ func LoginByTeacher(c *gin.Context) {
 	tokenResponse := LoginResponse{
 		Token: signedToken,
 		ID:    teacher.ID,
-		Name:  teacher.Name,
+		Name:  teacher.First_Name,
 		role:  `Teacher`,
-		
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": tokenResponse})

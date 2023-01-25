@@ -74,13 +74,43 @@ func GetTeacherRecord(c *gin.Context) {
 
 }
 
+func GetTeacherRecordfromTeacherDetail(c *gin.Context) {
+
+	var teacherrecord entity.TeacherRecord
+
+	id := c.Param("id")
+
+	if err := entity.DB().Preload("Teacher").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM teacher_records WHERE teacher_id = ? ORDER BY id desc limit 1", id).Find(&teacherrecord).Error; err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		return
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": teacherrecord})
+
+}
+
+func ListGradeNotINTeacherRecord(c *gin.Context) {
+	var teacherrecord []entity.TeacherRecord
+	teacher := c.Param("teacherid")
+
+	if err := entity.DB().Preload("Teacher").Preload("Grade").Raw("SELECT * FROM grades WHERE grade NOT IN (SELECT DISTINCT grade_id FROM teacher_records where teacher_id = ?)", teacher).Find(&teacherrecord).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"errorishere": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": teacherrecord})
+}
+
 // GET /teachers
 
 func ListTeacherRecords(c *gin.Context) {
 
 	var teacherrecord []entity.TeacherRecord
 
-	if err := entity.DB().Preload("Teacher").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM teacher_records ORDER BY teacher_record_year ASC").Find(&teacherrecord).Error; err != nil {
+	if err := entity.DB().Preload("Teacher").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM teacher_records ORDER BY teacher_record_year, class_room_id ASC ").Find(&teacherrecord).Error; err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 

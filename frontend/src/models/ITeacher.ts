@@ -1,8 +1,14 @@
 export interface TeachersInterface {
     
 	ID : number,
+
+	id: number,
+
+	Picture:string;
 	
-	Name: string;
+	First_Name: string;
+
+	Last_Name:string;
 
 	Email :string;
 
@@ -16,7 +22,11 @@ export interface TeachersInterface {
 
 	CodeID: string;
 
-	Age: number;
+	BirthDay: number;
 
-	BirthDay: Date | null;
+	BirthYear:number;
+
+	BirthMonth:number;
+
+	Password: string;
 }

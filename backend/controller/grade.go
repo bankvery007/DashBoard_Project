@@ -77,16 +77,29 @@ func UpdateGrade(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": grade})
 }
 
-func ListGradeNotINTeacherRecord(c *gin.Context) {
-	var grade []entity.Grade
+// func ListGradeNotINTeacherRecord(c *gin.Context) {
+// 	var grade []entity.Grade
+// 	teacher := c.Param("teacherid")
 
-	if err := entity.DB().Raw("SELECT * FROM grades WHERE id NOT IN (SELECT DISTINCT teacher_id FROM teacher_records)").Find(&grade).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"errorishere": err.Error()})
-		return
-	}
+// 	if err := entity.DB().Preload("Teacher").Preload("TeacherRecord").Raw("SELECT * FROM grades WHERE grade NOT IN (SELECT DISTINCT grade_id FROM teacher_records where teacher_id = ?)", teacher).Find(&grade).Error; err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"errorishere": err.Error()})
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": grade})
-}
+// 	c.JSON(http.StatusOK, gin.H{"data": grade})
+// }
+
+// func ListRecieptHistoryNotINWorkReceive(c *gin.Context) {
+// 	var workrecive []entity.WorkReceive
+
+// 	// ค้นหา work receive ทั้งหมดที่ไม่มีในข้อมูล reciepthistory
+// 	if err := entity.DB().Preload("RepairRequest").Preload("Employee").Raw("SELECT * FROM work_receives WHERE id NOT IN (SELECT DISTINCT work_receive_id FROM reciept_histories)").Find(&workrecive).Error; err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"errorishere": err.Error()})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, gin.H{"data": workrecive})
+// }
 
 // GET /classroom/:id
 func GetGradenodis(c *gin.Context) {

@@ -10,6 +10,7 @@ import { StudentsInterface } from '../models/IStudent';
 import { ClassroomsInterface } from '../models/IClassRoom';
 import { GradesInterface } from '../models/IGrade';
 import Nav from 'react-bootstrap/Nav';
+import { toast } from 'react-toastify';
 
 
 function StudentRecord() {
@@ -97,9 +98,9 @@ function StudentRecord() {
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
-           setSuccess(true);
+          toast.success("บันทึกสำเร็จ")
         } else {
-          setError(true);
+          toast.error("บันทึกไม่สำเร็จ")
         }
       });
   }
@@ -142,7 +143,7 @@ function StudentRecord() {
   }
 
   const getgrade = async () => {
-    fetch(`${apiUrl}/gradesNoid`, requestOptionsget)
+    fetch(`${apiUrl}/grades`, requestOptionsget)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
@@ -161,6 +162,7 @@ function StudentRecord() {
     getgrade();
   }, []);
 
+  
 
 
   return (
@@ -174,15 +176,8 @@ function StudentRecord() {
           <br></br>
           <br></br>
           <Card border="secondary">
-            <Card.Header>
-              <Nav variant="tabs" defaultActiveKey="#first">
-                <Nav.Item>
-                  <Nav.Link href="/createstudent">ประวัตินักเรียน</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link href="#first">ประวัติระดับชั้นนักเรียน</Nav.Link>
-                </Nav.Item>
-              </Nav>
+            <Card.Header >
+            ประวัติระดับชั้นนักเรียน
             </Card.Header>
             <Card.Body>
               <Form>
@@ -198,8 +193,8 @@ function StudentRecord() {
                         >
                         <option>กรุณาเลือก</option>
                         {Student.map((item: StudentsInterface) => (
-                          <option value={item.ID} key={item.ID}>
-                            {item.Name}
+                          <option value={item.id} key={item.ID}>
+                            {item.First_Name} {item.Last_Name}
                           </option>
           
                         ))}

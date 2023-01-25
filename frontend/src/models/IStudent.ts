@@ -1,8 +1,32 @@
+export interface ArticlesInterface {
+	    
+	ID : number,
+
+	Name: string;
+
+}
+
+export interface Status_FamiliesInterface {
+	    
+	ID : number,
+
+	Name: string;
+
+}
+
 export interface StudentsInterface {
     
 	ID : number,
-	
-	Name: string;
+
+	id: number,
+
+	Picture: string;
+
+	First_Name: string;
+
+	Last_Name: string;
+
+	ID_Card: string;
 
 	Email :string;
 
@@ -16,7 +40,43 @@ export interface StudentsInterface {
 
 	CodeID: string;
 
-	Age: number;
+	BirthYear:number;
 
-	BirthDay: Date | null;
+	BirthMonth:string;
+
+	BirthDay: number;
+	
+	Father_Name:  string;
+
+	Father_Career:  string;
+
+	Father_Phone:  string;
+
+	Father_income:  number;
+
+	Mother_Name:  string;
+
+	Mother_Career:  string;
+
+	Mother_Phone:  string;
+
+	Mother_income:  number;
+
+	Parent_Name:  string;
+
+	Parent_Career:  string;
+
+	Parent_Phone: string;
+
+	Parent_About: string;
+
+	StatusFamilyID:  number;
+
+	StatusFamily:  Status_FamiliesInterface;
+
+	ArticleID: number;
+	Article:   ArticlesInterface;
+	Family_income : number;
+
+	Number_brother: number;
 }

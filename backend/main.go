@@ -4,7 +4,7 @@ import (
 	"github.com/bankvery007/dashboard/controller"
 
 	"github.com/bankvery007/dashboard/entity"
-	
+
 	"github.com/bankvery007/dashboard/middlewares"
 
 	"github.com/gin-gonic/gin"
@@ -19,83 +19,117 @@ func main() {
 	{
 		protected := api.Use(middlewares.Authorizes())
 		{
-	// Teacher Routes
+			// Teacher Routes
 
-	protected.GET("/teachers", controller.ListTeachers)
+			protected.GET("/teachers", controller.ListTeachers)
 
-	protected.GET("/teacher/:id", controller.GetTeacher)
+			protected.GET("/teacher/:id", controller.GetTeacher)
 
-	protected.POST("/teachers", controller.CreateTeacher)
+			protected.POST("/teachers", controller.CreateTeacher)
 
-	protected.PATCH("/teachers", controller.UpdateTeacher)
+			protected.PATCH("/teachers/:id", controller.UpdateTeacher)
 
-	protected.DELETE("/teachers/:id", controller.DeleteTeacher)
+			protected.DELETE("/teacher/:id", controller.DeleteTeacher)
 
-	// Student Routes
+			// Student Routes
 
-	protected.GET("/students", controller.ListStudents)
+			protected.GET("/students", controller.ListStudents)
 
-	protected.GET("/student/:id", controller.GetStudent)
+			protected.GET("/student/:id", controller.GetStudent)
 
-	protected.POST("/students", controller.CreateStudent)
+			protected.POST("/students", controller.CreateStudent)
 
-	protected.PATCH("/students", controller.UpdateStudent)
+			protected.PATCH("/students/:id", controller.UpdateStudent)
 
-	protected.DELETE("/students/:id", controller.DeleteStudent)
+			protected.DELETE("/student/:id", controller.DeleteStudent)
 
-	//ClassRoom Routes
-	protected.GET("/classrooms", controller.ListClassRooms)
+			// r.PATCH("/users", controller.UpdateUser)
 
-	protected.GET("/classroom/:id", controller.GetClassRoom)
+			protected.DELETE("/students/:id", controller.DeleteStudent)
 
-	protected.POST("/classrooms", controller.CreateClassRoom)
+			//ClassRoom Routes
+			protected.GET("/classrooms", controller.ListClassRooms)
 
-	protected.PATCH("/classrooms", controller.UpdateClassRoom)
+			protected.GET("/classroom/:id", controller.GetClassRoom)
 
-	protected.DELETE("/classrooms/:id", controller.DeleteClassRoom)
+			protected.POST("/classrooms", controller.CreateClassRoom)
 
-	//Grade Routes
-	protected.GET("/grades", controller.ListGrades)
+			protected.PATCH("/classrooms", controller.UpdateClassRoom)
 
-	protected.GET("/grades/:id", controller.GetGradenodis)
+			protected.DELETE("/classrooms/:id", controller.DeleteClassRoom)
 
-	protected.GET("/grade/:id", controller.GetGrade)
+			//Article Routes
+			protected.GET("/articles", controller.ListArticles)
 
-	protected.POST("/grades", controller.CreateGrade)
+			protected.GET("/articles/:id", controller.GetArticle)
 
-	protected.PATCH("/grades", controller.UpdateGrade)
+			protected.POST("/articles", controller.CreateArticle)
 
-	protected.DELETE("/grades/:id", controller.DeleteGrade)
+			//StatusFamily Routes
+			protected.GET("/status", controller.ListStatusFamily)
 
-	// TeacherRecord Routes
+			protected.GET("/status/:id", controller.GetStatusFamily)
 
-	protected.GET("/teacherrecords", controller.ListTeacherRecords)
+			protected.POST("/status", controller.CreateStatusFamily)
 
-	protected.GET("/teacherrecord/:id", controller.GetTeacherRecord)
+			//Grade Routes
+			protected.GET("/grades", controller.ListGrades)
 
-	protected.POST("/teacherrecords", controller.CreateTeacherRecord)
+			protected.GET("/grade/:id", controller.GetGrade)
 
-	protected.PATCH("/teacherrecords", controller.UpdateTeacherRecord)
+			protected.POST("/grades", controller.CreateGrade)
 
-	protected.DELETE("/teacherrecords/:id", controller.DeleteTeacherRecord)
+			protected.PATCH("/grades", controller.UpdateGrade)
 
-	//StudentRecord
+			protected.DELETE("/grades/:id", controller.DeleteGrade)
 
-	
-	protected.GET("/studentrecords", controller.ListStudentRecords)
+			// TeacherRecord Routes
 
-	protected.GET("/studentrecord/:id", controller.GetStudentRecord)
+			protected.GET("/teacherrecords", controller.ListTeacherRecords)
 
-	protected.POST("/studentrecords", controller.CreateStudentRecord)
+			protected.GET("/teacherrecord/:id", controller.GetTeacherRecord)
 
-	protected.PATCH("/studentrecords", controller.UpdateStudentRecord)
+			protected.GET("/teacherrecord/detail/:id", controller.GetTeacherRecordfromTeacherDetail)
 
-	protected.DELETE("/studentrecords/:id", controller.DeleteStudentRecord)
+			protected.POST("/teacherrecords", controller.CreateTeacherRecord)
 
-	
+			protected.GET("/gradesteacher/:teacherid", controller.ListGradeNotINTeacherRecord)
+
+			protected.PATCH("/teacherrecords", controller.UpdateTeacherRecord)
+
+			protected.DELETE("/teacherrecords/:id", controller.DeleteTeacherRecord)
+
+			//StudentRecord
+
+			protected.GET("/studentrecords", controller.ListStudentRecords)
+
+			protected.GET("/studentrecords/:year/:grade/:classroom", controller.GetStudentRecordfromyearandclassroom)
+
+			protected.GET("/studentrecordswithphysical/:year/:grade/:classroom", controller.GetStudentRecordwithPhysical)
+
+			protected.GET("/studentrecordbyid/:studentid", controller.GetStudentRecordbyID)
+
+			protected.GET("/studentrecord/:id", controller.GetStudentRecord)
+
+			protected.POST("/studentrecords", controller.CreateStudentRecord)
+
+			protected.PATCH("/studentrecords", controller.UpdateStudentRecord)
+
+			protected.DELETE("/studentrecords/:id", controller.DeleteStudentRecord)
+
+			//Physical
+
+			protected.GET("/physical", controller.Listphysical_fitnesses)
+
+			protected.GET("/physicaljump", controller.Listjumpofphysical_fitnesses)
+
+			protected.GET("/physical/:id", controller.Getphysical_fitness)
+
+			protected.POST("/physicals", controller.Createphysical_fitness)
+
 		}
 	}
-	
+
 	r.POST("/login_admin", controller.LoginByAdmin)
 	r.POST("/login_teacher", controller.LoginByTeacher)
 
@@ -104,7 +138,6 @@ func main() {
 	r.Run()
 
 }
-
 
 func CORSMiddleware() gin.HandlerFunc {
 
@@ -116,7 +149,7 @@ func CORSMiddleware() gin.HandlerFunc {
 
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, PATCH, DELETE")
 
 		if c.Request.Method == "OPTIONS" {
 

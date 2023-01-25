@@ -1,18 +1,26 @@
-import { StudentRecordsInterface } from "./IStudentRecord"
-import { TeacherReocrdsInterface } from "./ITeacherRecord"
+import { StudentRecordsInterface } from "./IStudentRecord";
+import { TeacherReocrdsInterface } from "./ITeacherRecord";
 
 export interface Physical_FitnessInterface {
-    ID: number,
+  ID: number;
 
-    run_50: Float32Array
+  Run50: number;
 
-    long_jump: Float32Array
+  Longjump: number;
 
-    StudentRecordID: number
-    StudentRecord: StudentRecordsInterface
+  SitUp: number;
 
-    TeacherRecordID: number
-    TeacherRecord: TeacherReocrdsInterface
+  GripStrength: number;
+
+  Wieght: number;
+
+  Height: number;
 
 
+
+  StudentRecordID: number;
+  StudentRecord: StudentRecordsInterface;
+
+  TeacherRecordID: number;
+  TeacherRecord: TeacherReocrdsInterface;
 }

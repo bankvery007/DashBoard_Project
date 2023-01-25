@@ -6,20 +6,27 @@ import Card from 'react-bootstrap/Card';
 
 function SignInHome() {
   return (
-    
-    <Tabs
-      defaultActiveKey="profile"
-      id="uncontrolled-tab-example"
+
+        
+      <Tabs
+      defaultActiveKey="teacher"
+      id="fill-tab-example"
       className="mb-3"
-    >
-      <Tab eventKey="home" title="แอดมิน">
+      fill>
+      <Tab eventKey="admin" title="แอดมิน">
         <SignIn_Admin />
       </Tab>
-      <Tab eventKey="profile" title="Profile">
+      <Tab eventKey="teacher" title="คุณครู">
         <Signin_Teacher />
       </Tab>
      
     </Tabs>
+    
+
+        
+   
+
+
 
     
   );

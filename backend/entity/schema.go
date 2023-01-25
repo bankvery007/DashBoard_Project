@@ -1,17 +1,15 @@
 package entity
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
 type Admin struct {
 	gorm.Model
 
-	Name		string
-	CodeID 	string
-	Password	string
+	Name     string
+	CodeID   string
+	Password string
 
 	Teachers []Teacher `gorm:"foreignKey:AdminID"`
 	Students []Student `gorm:"foreignKey:AdminID"`
@@ -20,7 +18,11 @@ type Admin struct {
 type Teacher struct {
 	gorm.Model
 
-	Name string
+	Picture string
+
+	First_Name string
+
+	Last_Name string
 
 	Email string
 
@@ -34,11 +36,13 @@ type Teacher struct {
 
 	CodeID string `gorm:"uniqueIndex"`
 
-	Password	string
+	Password string
 
-	Age uint8
+	BirthDay uint
 
-	BirthDay time.Time
+	BirthMonth uint
+
+	BirthYear uint
 
 	AdminID *uint
 	Admin   Admin
@@ -47,10 +51,34 @@ type Teacher struct {
 	TeacherRecords []TeacherRecord `gorm:"foreignKey:TeacherID"`
 }
 
-type Student struct {
+type Article struct {
 	gorm.Model
 
 	Name string
+
+	Students []Student `gorm:"foreignKey:ArticleID"`
+}
+
+type StatusFamily struct {
+	gorm.Model
+
+	Name string
+
+	Students []Student `gorm:"foreignKey:StatusFamilyID"`
+}
+
+type Student struct {
+	gorm.Model
+
+	ID int `json:"id"`
+
+	Picture string
+
+	First_Name string
+
+	Last_Name string
+
+	ID_Card string
 
 	Email string
 
@@ -64,20 +92,52 @@ type Student struct {
 
 	CodeID string `gorm:"uniqueIndex"`
 
-	Password	string
+	BirthDay uint
 
-	Age uint8
+	BirthMonth uint
 
-	BirthDay time.Time
+	BirthYear uint
+
+	Father_Name string
+
+	Father_Career string
+
+	Father_Phone string
+
+	Father_income uint
+
+	Mother_Name string
+
+	Mother_Career string
+
+	Mother_Phone string
+
+	Mother_income uint
+
+	Parent_About string
+
+	Parent_Name string
+
+	Parent_Career string
+
+	Parent_Phone string
+
+	Family_income uint
+
+	Number_brother uint
 
 	AdminID *uint
 	Admin   Admin
 
+	StatusFamilyID *uint
+	StatusFamily   StatusFamily
+
+	ArticleID *uint
+	Article   Article
+
 	//1 student to many studentrecord
 	StudentRecords []StudentRecord `gorm:"foreignKey:StudentID"`
 }
-
-
 
 type ClassRoom struct {
 	gorm.Model
@@ -98,15 +158,13 @@ type Grade struct {
 	StudentRecords []StudentRecord `gorm:"foreignKey:GradeID"`
 }
 
-
 type TeacherRecord struct {
 	gorm.Model
 
-	TeacherRecordYear	uint
+	TeacherRecordYear uint
 
 	TeacherID *uint
 	Teacher   Teacher
-
 
 	GradeID *uint
 	Grade   Grade
@@ -114,14 +172,15 @@ type TeacherRecord struct {
 	ClassRoomID *uint
 	ClassRoom   ClassRoom
 
-	Physical_Fitnesses []Physical_Fitness	`gorm:"foreignKey:TeacherRecordID"`
-	StudentRecords []StudentRecord `gorm:"foreignKey:TeacherRecordID"`
+	Physical_Fitnesses []Physical_Fitness `gorm:"foreignKey:TeacherRecordID"`
 }
 
 type StudentRecord struct {
 	gorm.Model
 
-	StudentRecordYear	uint
+	Status bool
+
+	StudentRecordYear uint
 
 	StudentID *uint
 	Student   Student
@@ -129,30 +188,29 @@ type StudentRecord struct {
 	GradeID *uint
 	Grade   Grade
 
-	ClassRoomID *uint
-	ClassRoom   ClassRoom
-
-	TeacherRecordID *uint
-	TeacherRecord	TeacherRecord
-
+	ClassRoomID      *uint
+	ClassRoom        ClassRoom
 	Physical_Fitness *Physical_Fitness `gorm: "foreignKey:StudentRecordID"`
 }
-
 
 type Physical_Fitness struct {
 	gorm.Model
 
-	run_50	float32
+	Run50 float32
 
-	long_jump float32
+	Longjump float32
 
-	StudentRecordID *uint   `gorm:"uniqueIndex"`
-	StudentRecord	StudentRecord
+	SitUp uint
+
+	GripStrength float32
+
+	Wieght float32
+
+	Height float32
+
+	StudentRecordID *uint
+	StudentRecord   StudentRecord
 
 	TeacherRecordID *uint
-	TeacherRecord	TeacherRecord
-
-	
-
+	TeacherRecord   TeacherRecord
 }
-

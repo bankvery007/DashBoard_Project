@@ -13,3 +13,7 @@ type LoginResponse struct {
 	Name string `json:"name"`
 	role  string `json:"role"`
 }
+
+// msg: 'login complete',
+// userId: user.id,
+// access_token: this.jwtService.sign(playload),

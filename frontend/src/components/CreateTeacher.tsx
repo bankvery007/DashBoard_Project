@@ -8,6 +8,7 @@ import { TeachersInterface } from '../models/ITeacher';
 import Button from 'react-bootstrap/Button';
 import TeacherRecord from './TeacherRecord';
 import Nav from 'react-bootstrap/Nav';
+import { toast } from 'react-toastify';
 
 
 function CreateTeacher() {
@@ -19,6 +20,33 @@ function CreateTeacher() {
     const [success, setSuccess] = React.useState(false);
 
     const [error, setError] = React.useState(false);
+
+    const [filebase64,setFileBase64] = useState<string>("")
+
+
+    function formSubmit(e: any) {
+        e.preventDefault();
+        // Submit your form with the filebase64 as 
+        // one of your fields
+        console.log({filebase64})
+        alert("here you'd submit the form using\n the filebase64 like any other field")
+      }
+    
+      // The Magic all happens here.
+      function convertFile(files: FileList|null) {
+        if (files) {
+          const fileRef = files[0] || ""
+          const fileType: string= fileRef.type || ""
+          console.log("This file upload is of type:",fileType)
+          const reader = new FileReader()
+          reader.readAsBinaryString(fileRef)
+          reader.onload=(ev: any) => {
+            // convert it to base64
+            setFileBase64(`data:${fileType};base64,${btoa(ev.target.result)}`)
+          }
+        }
+      }
+
 
 
     const handleClose = (
@@ -60,7 +88,11 @@ function CreateTeacher() {
 
         let data = {
 
-            Name: Teacher?.Name ?? "",
+            Picture: filebase64 ?? "",
+
+            First_Name: Teacher?.First_Name ?? "",
+
+            Last_Name: Teacher?.Last_Name ?? "",
 
             Email: Teacher?.Email ?? "",
 
@@ -72,10 +104,13 @@ function CreateTeacher() {
 
             PhoneNumber: Teacher?.PhoneNumber ?? "",
 
-            CodeTeacher: Teacher?.CodeID ?? "",
+            CodeID: Teacher?.CodeID ?? "",
 
-            Age: typeof Teacher?.Age === "string" ? parseInt(Teacher?.Age) : 0,
+            Password: Teacher.Password = "$2a$14$zD/Of05KXcKAYm8CeLY7KOFvAHnEHbNd9sElmWWsaQNKiTq6u6LaW",
 
+            BirthYear: typeof Teacher.BirthYear === "string" ? parseInt(Teacher.BirthYear) : 0,
+
+      
         };
 
 
@@ -98,11 +133,9 @@ function CreateTeacher() {
 
                 if (res.data) {
 
-                    setSuccess(true);
-
+                    toast.success("บันทึกสำเร็จ")
                 } else {
-
-                    setError(true);
+                  toast.error("บันทึกไม่สำเร็จ")
 
                 }
 
@@ -131,50 +164,82 @@ function CreateTeacher() {
                                 <Nav.Item>    <Nav.Link href="#first">ประวัติคุณครู</Nav.Link>
 
                                 </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link href="/teacherrecord">ประวัติระดับชั้นคุณครู</Nav.Link>
-                                </Nav.Item>
                             </Nav>
                         </Card.Header>
                         <Card.Body>
                             <Form>
                                 <Row>
-                                    <Col xs={12}>
+
+                                <Col xs={12}>
+                                    {filebase64 && <img src={filebase64} alt=""/>}
+                                        <Form.Group className="mb-2">
+                                            <Form.Label>รูปประจำตัว</Form.Label>
+                                            <Form.Control type="file"
+                                                id="Picture"
+                                                onSubmit={formSubmit}
+                                              
+                                                onChange={(e)=> convertFile((e.target as HTMLInputElement).files)}
+                                                />
+                                        
+                                        </Form.Group>
+                                        
+                                    </Col>
+                                    
+                                    <Col xs={6}>
                                         <Form.Group className="mb-2" >
-                                            <Form.Label>ชื่อ-นามสกุล</Form.Label>
+                                            <Form.Label>ชื่อจริง</Form.Label>
                                             <Form.Control type="string"
                                                 className="Form-control"
-                                                id="Name"
-                                                aria-describedby='Name'
-                                                value={Teacher?.Name || ""}
+                                                id="First_Name"
+                                                aria-describedby='First_Name'
+                                                value={Teacher?.First_Name || ""}
                                                 onChange={handleInputChange} />
                                         </Form.Group>
                                     </Col>
 
-                                </Row>
-
-                                <Row>
-                                    <Col xs={8}>
-                                        <Form.Group >
-                                            <Form.Label>วันเกิด</Form.Label>
-                                            <Form.Control type="Date" name="dob" placeholder="Date of Birth" />
+                                    <Col xs={6}>
+                                        <Form.Group className="mb-2" >
+                                            <Form.Label>นามสกุล</Form.Label>
+                                            <Form.Control type="string"
+                                                className="Form-control"
+                                                id="Last_Name"
+                                                aria-describedby='Last_Name'
+                                                value={Teacher?.Last_Name || ""}
+                                                onChange={handleInputChange} />
                                         </Form.Group>
                                     </Col>
+
+                                 
+
                                     <Col xs={4}>
-                                        <Form.Group className="mb-2">
-                                            <Form.Label>อายุ</Form.Label>
+                                        <Form.Group >
+                                        <Form.Label>ปีเกิด</Form.Label>
                                             <Form.Control type="number"
                                                 className="Form-control"
-                                                id="Age"
-                                                aria-describedby='AgeHelp'
-                                                value={Teacher?.Age || ""}
+                                                id="BirthYear"
+                                                aria-describedby='BirthYear'
+                                                value={Teacher?.BirthYear || ""}
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
                                     </Col>
-                                </Row>
 
-                                <Row>
+
+
+                                    <Col xs={8}>
+                                        <Form.Group className="mb-2">
+                                            <Form.Label>รหัสคุณครู</Form.Label>
+                                            <Form.Control type="String"
+                                                className="Form-control"
+                                                id="CodeID"
+                                                aria-describedby='CodeID'
+                                                value={Teacher?.CodeID || ""}
+                                                onChange={handleInputChange} />
+
+                                        </Form.Group>
+                                    </Col>
+                                   
+                               
                                     <Col xs={12}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>ที่อยู่</Form.Label>
@@ -187,9 +252,9 @@ function CreateTeacher() {
 
                                         </Form.Group>
                                     </Col>
-                                </Row>
+                               
 
-                                <Row>
+                             
                                     <Col xs={8}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>จังหวัด</Form.Label>
@@ -215,9 +280,9 @@ function CreateTeacher() {
 
                                         </Form.Group>
                                     </Col>
-                                </Row>
+                               
 
-                                <Row>
+                             
                                     <Col xs={6}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>เบอร์ติดต่อ</Form.Label>
@@ -243,26 +308,15 @@ function CreateTeacher() {
 
                                         </Form.Group>
                                     </Col>
-                                </Row>
+                            
 
 
-                                <Row>
-                                    <Col xs={12}>
-                                        <Form.Group className="mb-2">
-                                            <Form.Label>รหัสคุณครู</Form.Label>
-                                            <Form.Control type="String"
-                                                className="Form-control"
-                                                id="CodeTeacher"
-                                                aria-describedby='CodeTeacherHelp'
-                                                value={Teacher?.CodeID || ""}
-                                                onChange={handleInputChange} />
-
-                                        </Form.Group>
-                                    </Col>
-                                </Row>
+                      
+                              
+                           
 
 
-                                <Row>
+                              
                                     <Col xs={6}>
                                         <Button
                                             style={{ float: "left" }}

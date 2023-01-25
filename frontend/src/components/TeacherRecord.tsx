@@ -10,16 +10,22 @@ import { TeacherReocrdsInterface } from '../models/ITeacherRecord';
 import { ClassroomsInterface } from '../models/IClassRoom';
 import { GradesInterface } from '../models/IGrade';
 import Nav from 'react-bootstrap/Nav';
-
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 function TeacherRecord() {
 
-  const [date, setDate] = React.useState<Date | null>(null);
+  // const [date, setDate] = React.useState<Date | null>(null);
 
   const [TeacherRecord, setTeacherRecord] = React.useState<Partial<TeacherReocrdsInterface>>({});
   const [Teacher, setTeacher] = React.useState<TeachersInterface[]>([]);
+
+
   const [ClassRoom, setClassRoom] = React.useState<ClassroomsInterface[]>([]);
-  const [Grade, setGrade] = React.useState<GradesInterface[]>([]);
+
+  // const [Grade, setGrade] = React.useState<GradesInterface[]>([]);
+
+  const [TeacherGrade, setTeacherGrade] = React.useState<TeacherReocrdsInterface[]>([]);
 
   const [success, setSuccess] = React.useState(false);
 
@@ -70,6 +76,22 @@ function TeacherRecord() {
     });
   };
 
+  const handleChangegrade = (
+    event: React.ChangeEvent<{ name?: string; value: unknown }>
+  ) => {
+    getgrade(event.target.value as number)
+    const name = event.target.name as keyof typeof TeacherRecord;
+    setTeacherRecord({
+      ...TeacherRecord,
+      [name]: event.target.value,
+    });
+    console.log(event.target.value);
+
+
+  };
+
+
+
 
   function submit() {
 
@@ -85,9 +107,10 @@ function TeacherRecord() {
 
     const requestOptionsPost = {
       method: "POST",
-      headers: {  
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-      "Content-Type": "application/json", },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(data),
     };
     console.log(apiUrl)
@@ -97,9 +120,9 @@ function TeacherRecord() {
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
-          setSuccess(true);
+          toast.success("บันทึกสำเร็จ")
         } else {
-          setError(true);
+          toast.error("บันทึกไม่สำเร็จ")
         }
       });
 
@@ -110,9 +133,10 @@ function TeacherRecord() {
   const apiUrl = "http://localhost:8080";
   const requestOptionsget = {
     method: "GET",
-    headers: { 
+    headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
-    "Content-Type": "application/json", },
+      "Content-Type": "application/json",
+    },
   };
 
 
@@ -123,6 +147,8 @@ function TeacherRecord() {
       .then((res) => {
         if (res.data) {
           setTeacher(res.data);
+          console.log(res.data)
+          // setGrade(res.data);
         } else {
           console.log("else");
         }
@@ -141,12 +167,16 @@ function TeacherRecord() {
       });
   }
 
-  const getgrade = async () => {
-    fetch(`${apiUrl}/grades`, requestOptionsget)
+  // axios.put(`http://localhost:8080/users/listUsers/${id}`
+
+
+  const getgrade = async (teacherid: number) => {
+    fetch(`${apiUrl}/gradesteacher/${teacherid}`, requestOptionsget)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
-          setGrade(res.data);
+          setTeacherGrade(res.data);
+
         } else {
           console.log("else");
         }
@@ -158,14 +188,13 @@ function TeacherRecord() {
   useEffect(() => {
     getteacher();
     getclassroom();
-    getgrade();
   }, []);
 
 
 
   return (
 
-    
+
     <Container>
       <Row>
         <Col sm={3}></Col>
@@ -177,10 +206,7 @@ function TeacherRecord() {
             <Card.Header>
               <Nav variant="tabs" defaultActiveKey="#first">
                 <Nav.Item>
-                  <Nav.Link href="/createteacher">ประวัติคุณครู</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link href="#first">ประวัติระดับชั้นคุณครู</Nav.Link>
+                  <Nav.Link href="#first">บันทึกคุณครู</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Card.Header>
@@ -190,20 +216,20 @@ function TeacherRecord() {
                   <Col xs={8}>
                     <Form.Group className="mb-2" >
                       <Form.Label>คุณครู</Form.Label>
-                      <Form.Select 
+                      <Form.Select
                         name="TeacherID"
                         aria-label="TeacherID"
                         value={TeacherRecord.TeacherID}
-                        onChange={handleChange}
-                        >
+                        onChange={handleChangegrade}
+                      >
                         <option>กรุณาเลือก</option>
                         {Teacher.map((item: TeachersInterface) => (
                           <option value={item.ID} key={item.ID}>
-                            {item.Name}
+                            {item.First_Name} {item.Last_Name}
                           </option>
-          
+
                         ))}
-                   
+
 
                       </Form.Select>
                     </Form.Group>
@@ -229,15 +255,16 @@ function TeacherRecord() {
                   <Col xs={6}>
                     <Form.Group className="mb-2" >
                       <Form.Label>ระดับชั้นประถมศึกษา</Form.Label>
-                      <Form.Select 
+                      <Form.Select
                         name="GradeID"
                         value={TeacherRecord.GradeID}
                         onChange={handleChange}>
                         <option>กรุณาเลือก</option>
-                        {Grade.map((item: GradesInterface) => (
+                        {TeacherGrade.map((item: TeacherReocrdsInterface) => (
                           <option value={item.ID} key={item.ID}>
-                            ชั้นประถมศึกษา {item.Grade}
+                            {item.ID}
                           </option>
+
                         ))}
 
                       </Form.Select>
@@ -247,7 +274,7 @@ function TeacherRecord() {
                   <Col xs={6}>
                     <Form.Group className="mb-2" >
                       <Form.Label>ห้อง</Form.Label>
-                      <Form.Select 
+                      <Form.Select
                         name="ClassRoomID"
                         value={TeacherRecord.ClassRoomID}
                         onChange={handleChange}>
