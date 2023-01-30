@@ -74,8 +74,7 @@ function StudentRecord() {
 
   function submit() {
 
-    let data = {
-    StudentID: typeof StudentRecord?.StudentID === "string" ? parseInt(StudentRecord?.StudentID) : 0,
+    let data = { 
     ClassRoomID: typeof StudentRecord?.ClassRoomID === "string" ? parseInt(StudentRecord?.ClassRoomID) : 0,
     GradeID: typeof StudentRecord?.GradeID === "string" ? parseInt(StudentRecord?.GradeID) : 0,
     StudentRecordYear: typeof StudentRecord?.StudentRecordYear === "string" ? parseInt(StudentRecord?.StudentRecordYear) : 0,

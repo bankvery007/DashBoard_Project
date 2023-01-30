@@ -9,7 +9,6 @@ import { StudentRecordsInterface } from "../models/IStudentRecord";
 import Modal from "react-bootstrap/esm/Modal";
 import Button from "react-bootstrap/esm/Button";
 import CreatePhysical from "./CreatePhysical";
-import { type } from "os";
 import { isDisabled } from "@testing-library/user-event/dist/utils";
 
 function TableClassroom() {
