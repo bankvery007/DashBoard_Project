@@ -12,10 +12,6 @@ import (
 
 func CreateStudentRecord(c *gin.Context) {
 
-	// var classroom entity.ClassRoom
-	// var grade entity.Grade
-	// var studentrecord entity.StudentRecord
-
 	var payload struct {
 		GradeID           uint
 		ClassRoomID       uint
@@ -35,13 +31,6 @@ func CreateStudentRecord(c *gin.Context) {
 
 	if err := entity.DB().Model(&entity.StudentRecord{}).Where("student_record_year = ? AND grade_id = ? AND class_room_id = ?", payload.StudentRecordYear, payload.GradeID, payload.ClassRoomID).
 		Preload("Student").Find(&studentrecords).Error; err != nil {
-
-		// Preload("Grade").
-		// Preload("ClassRoom").
-		// Preload("Physical_Fitness").
-
-		// Where("SELECT * FROM student_records WHERE student_record_year = ? AND grade_id = ? AND class_room_id = ?", payload.StudentRecordYear, payload.GradeID, payload.ClassRoomID).
-		// Scan(&studentrecords).Error; err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
