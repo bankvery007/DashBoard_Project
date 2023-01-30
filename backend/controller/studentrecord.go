@@ -11,12 +11,18 @@ import (
 // POST /Students
 
 func CreateStudentRecord(c *gin.Context) {
-	var student entity.Student
-	var classroom entity.ClassRoom
-	var grade entity.Grade
-	var studentrecord entity.StudentRecord
 
-	if err := c.ShouldBindJSON(&studentrecord); err != nil {
+	// var classroom entity.ClassRoom
+	// var grade entity.Grade
+	// var studentrecord entity.StudentRecord
+
+	var payload struct {
+		GradeID           uint
+		ClassRoomID       uint
+		StudentRecordYear uint
+	}
+
+	if err := c.ShouldBindJSON(&payload); err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
@@ -24,32 +30,56 @@ func CreateStudentRecord(c *gin.Context) {
 
 	}
 
-	if tx := entity.DB().Where("id = ?", studentrecord.StudentID).First(&student); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "student not found"})
-		return
-	}
+	// var student []string
+	var studentrecords []entity.StudentRecord
 
-	if tx := entity.DB().Where("id = ?", studentrecord.GradeID).First(&grade); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "grade not found"})
-		return
-	}
+	if err := entity.DB().Model(&entity.StudentRecord{}).Where("student_record_year = ? AND grade_id = ? AND class_room_id = ?", payload.StudentRecordYear, payload.GradeID, payload.ClassRoomID).
+		Preload("Student").Find(&studentrecords).Error; err != nil {
 
-	if tx := entity.DB().Where("id = ?", studentrecord.ClassRoomID).First(&classroom); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "classroom not found"})
-		return
-	}
+		// Preload("Grade").
+		// Preload("ClassRoom").
+		// Preload("Physical_Fitness").
 
-	sr := entity.StudentRecord{
-		Student:           student,
-		Grade:             grade,
-		ClassRoom:         classroom,
-		StudentRecordYear: studentrecord.StudentRecordYear,
-	}
-	if err := entity.DB().Create(&sr).Error; err != nil {
+		// Where("SELECT * FROM student_records WHERE student_record_year = ? AND grade_id = ? AND class_room_id = ?", payload.StudentRecordYear, payload.GradeID, payload.ClassRoomID).
+		// Scan(&studentrecords).Error; err != nil {
+
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
 		return
+
 	}
-	c.JSON(http.StatusOK, gin.H{"data": sr})
+
+	// c.JSON(http.StatusOK, gin.H{"data": studentrecords})
+
+	var resultStudentRecord []entity.StudentRecord
+
+	for _, studentrecord := range studentrecords {
+		var grade entity.Grade
+		if tx := entity.DB().Where("id = ?", payload.GradeID).First(&grade); tx.RowsAffected == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "grade not found"})
+			return
+		}
+		grade.Grade++
+		var newgrade entity.Grade
+		if tx := entity.DB().Where("grade = ?", grade.Grade).First(&newgrade); tx.RowsAffected == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "grade not found"})
+			return
+		}
+		studentrecord.StudentRecordYear++
+		newstudentRecord := entity.StudentRecord{
+			Student:           studentrecord.Student,
+			Grade:             newgrade,
+			ClassRoomID:       studentrecord.ClassRoomID,
+			StudentRecordYear: studentrecord.StudentRecordYear,
+		}
+		if err := entity.DB().Create(&newstudentRecord).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		resultStudentRecord = append(resultStudentRecord, newstudentRecord)
+	}
+	c.JSON(http.StatusOK, gin.H{"data": resultStudentRecord})
+
 }
 
 // GET /studentrecord/:id
