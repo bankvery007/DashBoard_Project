@@ -181,7 +181,7 @@ function StudentRecord() {
             <Card.Body>
               <Form>
                 <Row>
-                  <Col xs={8}>
+                  {/* <Col xs={8}>
                     <Form.Group className="mb-2" >
                       <Form.Label>นักเรียน</Form.Label>
                       <Form.Select 
@@ -201,7 +201,7 @@ function StudentRecord() {
 
                       </Form.Select>
                     </Form.Group>
-                  </Col>
+                  </Col> */}
                   <Col xs={4}>
                     <Form.Group className="mb-2">
                       <Form.Label>ปีการศึกษา</Form.Label>
@@ -216,11 +216,11 @@ function StudentRecord() {
                   </Col>
 
 
-                </Row>
+           
 
-                <Row>
+          
 
-                  <Col xs={6}>
+                  <Col xs={4}>
                     <Form.Group className="mb-2" >
                       <Form.Label>ระดับชั้นประถมศึกษา</Form.Label>
                       <Form.Select 
@@ -238,7 +238,7 @@ function StudentRecord() {
                     </Form.Group>
                   </Col>
 
-                  <Col xs={6}>
+                  <Col xs={4}>
                     <Form.Group className="mb-2" >
                       <Form.Label>ห้อง</Form.Label>
                       <Form.Select 
@@ -270,7 +270,7 @@ function StudentRecord() {
                   <Col xs={6}>
                     <Button style={{ float: "right" }}
                       onClick={submit}
-                      variant="success">ยืนยัน</Button>{' '}
+                      variant="success">เลื่อนชั้น</Button>{' '}
 
                   </Col>
 
