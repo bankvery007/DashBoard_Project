@@ -16,7 +16,9 @@ export interface Physical_FitnessInterface {
 
   Height: number;
 
+  Datetime: string;
 
+  CreatedAt : string
 
   StudentRecordID: number;
   StudentRecord: StudentRecordsInterface;

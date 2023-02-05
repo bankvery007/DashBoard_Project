@@ -18,6 +18,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import moment from 'moment';
 
 
 ChartJS.register(
@@ -207,7 +208,7 @@ function Dashboard() {
       .then((res) => {
         if (res.data) {
           setSelectstudent(res.data);
-          console.log(res.data)
+          console.log('setSelectstudent',res.data)
         } else {
           console.log("else");
         }
@@ -216,7 +217,7 @@ function Dashboard() {
 
   
 
-  const labels = ['ป.1', 'ป.2', 'ป.3', 'ป.4', 'ป.5', 'ป.6'];
+  const labels = Selectstudent.map(x => {return x.Physical_Fitness ? moment(x.Physical_Fitness.CreatedAt).format('l'): null})
 
   
   const dataJump = {

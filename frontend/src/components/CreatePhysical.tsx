@@ -9,7 +9,7 @@ import { Physical_FitnessInterface } from "../models/IPhysical_Fitness";
 import { TeacherReocrdsInterface } from "../models/ITeacherRecord";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
-
+import moment from 'moment';
 interface Props {
   param : number;
 }
@@ -17,7 +17,7 @@ interface Props {
 
 function CreatePhysical({param}:Props) {
 
-  const [date, setDate] = React.useState<Date | null>(null);
+
 
   const [Student, setStudent] = React.useState<StudentRecordsInterface>();
 
@@ -54,14 +54,17 @@ function CreatePhysical({param}:Props) {
     });
   };
 
+  let CurrentDate = moment(Physical.CreatedAt).format('l');
   function submit() {
+    
     let data = {
-      Longjump:
-        typeof Physical?.Longjump === "string"
-          ? parseFloat(Physical?.Longjump)
-          : 0,
-      Run50:
-        typeof Physical?.Run50 === "string" ? parseFloat(Physical?.Run50) : 0,
+      Longjump: typeof Physical?.Longjump === "string" ? parseFloat(Physical?.Longjump): 0,
+      Run50: typeof Physical?.Run50 === "string" ? parseFloat(Physical?.Run50) : 0,
+      GripStrength: typeof Physical?.GripStrength === "string" ? parseFloat(Physical?.GripStrength) : 0,
+      SitUp: typeof Physical?.SitUp === "string" ? parseFloat(Physical?.SitUp) : 0,
+      Wieght: typeof Physical?.Wieght === "string" ? parseFloat(Physical?.Wieght) : 0,
+      Height: typeof Physical?.Height === "string" ? parseFloat(Physical?.Height) : 0,
+      Datetime : CurrentDate,
       StudentRecordID: Student?.ID,
       TeacherRecordID: TeacherRecord?.ID,
     };
@@ -160,7 +163,7 @@ function CreatePhysical({param}:Props) {
         </Form.Select>
       </Form.Group>
       <Form.Group className="mb-2">
-        <Form.Label>การกระโดดไกล</Form.Label>
+        <Form.Label>ยืนกระโดดไกล</Form.Label>
         <Form.Control
           type="number"
           className="Form-control"
@@ -178,6 +181,50 @@ function CreatePhysical({param}:Props) {
           id="Run50"
           aria-describedby="Run50Help"
           value={Physical.Run50}
+          onChange={handleInputChange}
+        />
+      </Form.Group>
+      <Form.Group className="mb-2">
+        <Form.Label>แรงบีบมือที่ถนัด</Form.Label>
+        <Form.Control
+          type="number"
+          className="Form-control"
+          id="GripStrength"
+          aria-describedby="GripStrength"
+          value={Physical.GripStrength}
+          onChange={handleInputChange}
+        />
+      </Form.Group>
+      <Form.Group className="mb-2">
+        <Form.Label>ลุก-นั่ง 30 วินาที</Form.Label>
+        <Form.Control
+          type="number"
+          className="Form-control"
+          id="SitUp"
+          aria-describedby="SitUp"
+          value={Physical.SitUp}
+          onChange={handleInputChange}
+        />
+      </Form.Group>
+      <Form.Group className="mb-2">
+        <Form.Label>น้ำหนัก</Form.Label>
+        <Form.Control
+          type="number"
+          className="Form-control"
+          id="Wieght"
+          aria-describedby="Wieght"
+          value={Physical.Wieght}
+          onChange={handleInputChange}
+        />
+      </Form.Group>
+      <Form.Group className="mb-2">
+        <Form.Label>ส่วนสูง</Form.Label>
+        <Form.Control
+          type="number"
+          className="Form-control"
+          id="Height"
+          aria-describedby="Height"
+          value={Physical.Height}
           onChange={handleInputChange}
         />
       </Form.Group>
