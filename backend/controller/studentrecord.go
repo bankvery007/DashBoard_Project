@@ -119,7 +119,7 @@ func GetStudentRecordbyID(c *gin.Context) {
 
 	studentid := c.Param("studentid")
 
-	if err := entity.DB().Preload("Student").Preload("Physical_Fitness").Raw("SELECT * FROM student_records WHERE student_id = ?", studentid).Find(&studentrecord).Error; err != nil {
+	if err := entity.DB().Preload("Student").Preload("Physical_Fitness").Raw("SELECT * FROM student_records join physical_fitnesses on student_records.id = physical_fitnesses.student_record_id where student_id =?", studentid).Find(&studentrecord).Error; err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 

@@ -208,6 +208,8 @@ type Physical_Fitness struct {
 
 	Height float32
 
+	Datetime string
+
 	StudentRecordID *uint
 	StudentRecord   StudentRecord
 

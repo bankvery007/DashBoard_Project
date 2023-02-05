@@ -1,6 +1,8 @@
 package main
 
 import (
+
+
 	"github.com/bankvery007/dashboard/controller"
 
 	"github.com/bankvery007/dashboard/entity"
@@ -14,6 +16,7 @@ func main() {
 
 	entity.SetupDatabase()
 	r := gin.Default()
+	r.SetTrustedProxies([]string{"192.168.31.119"})
 	r.Use(CORSMiddleware())
 	api := r.Group("")
 	{

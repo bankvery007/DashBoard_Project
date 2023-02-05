@@ -41,6 +41,7 @@ func Createphysical_fitness(c *gin.Context) {
 		GripStrength:  physicalfiness.GripStrength,
 		Run50:         physicalfiness.Run50,
 		Longjump:      physicalfiness.Longjump,
+		Datetime: 	   physicalfiness.Datetime,		
 		TeacherRecord: teacherrecord,
 		StudentRecord: studentrecord,
 	}
