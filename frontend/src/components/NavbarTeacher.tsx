@@ -22,7 +22,9 @@ export default function Navbar_Teacher() {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="me-auto">
           <Nav.Link href="/tableclassroom">รายชื่อนักเรียน</Nav.Link>
-          <Nav.Link href="/dashboard">ประวัติสมรรถภาพนักเรียน</Nav.Link>
+          <Nav.Link href="/tablephysical">ประวัติสมรรถภาพนักเรียน</Nav.Link>
+          <Nav.Link href="/dashboard">กราฟสมรรถภาพนักเรียน</Nav.Link>
+
         </Nav>
         <Nav>
           <Nav.Link onClick={signout} href="#logout">ออกจากระบบ</Nav.Link>

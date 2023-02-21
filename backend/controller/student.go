@@ -55,24 +55,6 @@ func GetStudent(c *gin.Context) {
 
 }
 
-func GetStudentArticle(c *gin.Context) {
-
-	var student entity.Student
-
-	id := c.Param("id")
-
-	if err := entity.DB().Raw("SELECT * FROM students WHERE id = ?", id).Scan(&student).Error; err != nil {
-
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		return
-
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": student})
-
-}
-
 // GET /students
 
 func ListStudents(c *gin.Context) {
@@ -80,6 +62,22 @@ func ListStudents(c *gin.Context) {
 	var students []entity.Student
 
 	if err := entity.DB().Raw("SELECT * FROM students").Scan(&students).Error; err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		return
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": students})
+
+}
+
+func ListStudentStatus(c *gin.Context) {
+
+	var students []entity.Student
+
+	if err := entity.DB().Raw("SELECT * FROM students where status = 0").Scan(&students).Error; err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
@@ -129,6 +127,7 @@ func UpdateStudent(c *gin.Context) {
 	newStudent.ArticleID = student.ArticleID
 	newStudent.First_Name = student.First_Name
 	newStudent.Last_Name = student.Last_Name
+	newStudent.Full_Name = student.First_Name + " " + student.Last_Name
 	newStudent.ID_Card = student.ID_Card
 	newStudent.PhoneNumber = student.PhoneNumber
 	newStudent.Email = student.Email
@@ -160,6 +159,7 @@ func UpdateStudent(c *gin.Context) {
 		ArticleID:      newStudent.ArticleID,
 		First_Name:     newStudent.First_Name,
 		Last_Name:      newStudent.Last_Name,
+		Full_Name:      newStudent.First_Name + " " + newStudent.Last_Name,
 		ID_Card:        newStudent.ID_Card,
 		PhoneNumber:    newStudent.PhoneNumber,
 		Email:          newStudent.Email,

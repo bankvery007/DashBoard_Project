@@ -42,6 +42,7 @@ label {
 
 .button-size {
   display: flex;
+  align-items: end;
   gap: 2rem;
   justify-content: right;
 }

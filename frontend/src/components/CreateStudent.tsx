@@ -4,16 +4,15 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
-import { StudentsInterface, Status_FamiliesInterface, ArticlesInterface } from '../models/IStudent';
+import { StudentsInterface, Status_FamiliesInterface, ArticlesInterface, BirthMonthsInterface} from '../models/IStudent';
 import { Button } from 'react-bootstrap';
 import Nav from 'react-bootstrap/Nav';
 import { toast } from 'react-toastify';
 
 
-
 function CreateStudent() {
 
-    const [date, setDate] = React.useState<Date | null>(null);
+
 
     const [Student, setStudent] = React.useState<Partial<StudentsInterface>>({});
 
@@ -21,36 +20,36 @@ function CreateStudent() {
 
     const [StatusFamily, setStatusFamily] = React.useState<Status_FamiliesInterface[]>([]);
 
-    const [success, setSuccess] = React.useState(false);
+    const [Month,setMonth] = React.useState<BirthMonthsInterface[]>([]);
 
-    const [error, setError] = React.useState(false);
-
-    const [file, setFiles] = useState(null)
 
     const [filebase64,setFileBase64] = useState<string>("")
 
 
+    const [validated, setValidated] = useState(false);
+    const [error, seterror] = useState(true);
 
+    const handleSubmit = (event:any) => {
+      const form = event.currentTarget;
 
-    const handleClose = (
-
-        event?: React.SyntheticEvent | Event,
-
-        reason?: string
-
-    ) => {
-
-        if (reason === "clickaway") {
-
-            return;
-
-        }
-
-        setSuccess(false);
-
-        setError(false);
-
+      if (form.checkValidity() === false) {
+        seterror(true)
+        event.preventDefault();
+        event.stopPropagation();
+        toast.error("กรุณากรอกข้อมูลให้ครบถ้วน") 
+      }
+      setValidated(true);
+      event.preventDefault();
+      submit();
+      if (form.checkValidity() === true) {
+        toast.success("บันทึกสำเร็จ")
+        setTimeout(() => {
+            window.location.reload();
+            }
+            , 3000);
+      }
     };
+
     
 
     const handleInputChange = (
@@ -83,7 +82,7 @@ function CreateStudent() {
         e.preventDefault();
         // Submit your form with the filebase64 as 
         // one of your fields
-        console.log({filebase64})
+ 
         alert("here you'd submit the form using\n the filebase64 like any other field")
       }
     
@@ -92,7 +91,7 @@ function CreateStudent() {
         if (files) {
           const fileRef = files[0] || ""
           const fileType: string= fileRef.type || ""
-          console.log("This file upload is of type:",fileType)
+  
           const reader = new FileReader()
           reader.readAsBinaryString(fileRef)
           reader.onload=(ev: any) => {
@@ -101,13 +100,16 @@ function CreateStudent() {
           }
         }
       }
-
+    
 
     
 
     const apiUrl = "http://localhost:8080";
 
     function submit() {
+ 
+
+        
 
         let data = {
 
@@ -116,6 +118,8 @@ function CreateStudent() {
             First_Name: Student.First_Name ?? "",
 
             Last_Name: Student.Last_Name ?? "",
+
+            Full_Name: Student.First_Name + " " + Student.Last_Name ?? "",
 
             ID_Card: Student.ID_Card ?? "",
 
@@ -131,7 +135,9 @@ function CreateStudent() {
 
             CodeID: Student.CodeID ?? "",
 
-            BirthYear: typeof Student.BirthYear === "string" ? parseInt(Student.BirthYear) : 0,
+            BirthYear: typeof Student.BirthYear === "string" ? Number(Student.BirthYear) : 0,
+
+            BirthDay: typeof Student.BirthDay === "string" ? Number(Student.BirthDay) : 0,
 
             Father_Name: Student.Father_Name,
 
@@ -139,7 +145,7 @@ function CreateStudent() {
 
             Father_Phone: Student.Father_Phone,
 
-            Father_income: typeof Student.Father_income === "string" ? parseInt(Student.Father_income) : 0, 
+            Father_income: typeof Student.Father_income === "string" ? Number(Student.Father_income) : 0, 
 
             Mother_Name: Student.Mother_Name,
 
@@ -147,7 +153,7 @@ function CreateStudent() {
 
             Mother_Phone: Student.Mother_Phone,
 
-            Mother_income: typeof Student.Mother_income === "string" ? parseInt(Student.Mother_income) : 0, 
+            Mother_income: typeof Student.Mother_income === "string" ? Number(Student.Mother_income) : 0, 
 
             Parent_Name: Student.Parent_Name,
 
@@ -157,16 +163,25 @@ function CreateStudent() {
 
             Parent_About: Student.Parent_About,
 
-            StatusFamilyID: typeof  Student.StatusFamilyID === "string" ? parseInt( Student.StatusFamilyID) : 0,
+            StatusFamilyID: typeof  Student.StatusFamilyID === "string" ? Number( Student.StatusFamilyID) : 0,
 
-            ArticleID: typeof  Student.ArticleID === "string" ? parseInt( Student.ArticleID) : 0,
+            ArticleID: typeof  Student.ArticleID === "string" ? Number( Student.ArticleID) : 0,
 
-            Family_income : typeof Student.Family_income === "string" ? parseInt(Student.Family_income) : 0, 
+            BirthMonthID: typeof  Student.BirthMonthID === "string" ? Number(Student.BirthMonthID) : 0,
 
-            Number_brother: typeof Student.Number_brother === "string" ? parseInt(Student.Number_brother) : 0,
+            Family_income : typeof Student.Family_income === "string" ? Number(Student.Family_income) : 0, 
+
+            Number_brother: typeof Student.Number_brother === "string" ? Number(Student.Number_brother) : 0,
             
 
         };
+
+
+
+        
+     
+
+    
 
         const requestOptionsPost = {
             method: "POST",
@@ -186,10 +201,11 @@ function CreateStudent() {
 
                 if (res.data) {
 
-                    toast.success("บันทึกสำเร็จ")
                 } else {
-                  toast.error("บันทึกไม่สำเร็จ")
-
+                    if (error === false) {
+                        toast.error("บันทึกไม่สำเร็จ")
+                    }
+                    
                 }
 
             });
@@ -211,9 +227,23 @@ function CreateStudent() {
             .then((res) => {
                 if (res.data) {
                     setArticle(res.data);
-                    console.log(res.data)
+        
                 } else {
-                    console.log("else");
+    
+                }
+            });
+    }
+
+    
+    const getMonth = async () => {
+        fetch(`${apiUrl}/month`, requestOptionsget)
+            .then((response) => response.json())
+            .then((res) => {
+                if (res.data) {
+                    setMonth(res.data);
+        
+                } else {
+    
                 }
             });
     }
@@ -224,18 +254,19 @@ function CreateStudent() {
             .then((res) => {
                 if (res.data) {
                     setStatusFamily(res.data);
-                    console.log(res.data)
+            
                 } else {
-                    console.log("else");
+      
                 }
             });
     }
 
-    console.log(Student)
+
 
     useEffect(() => {
         getarticle();
         getstatus();
+        getMonth();
     }, []);
 
     // useEffect(() => {
@@ -245,11 +276,7 @@ function CreateStudent() {
     //     setImageURLs(newImageUrls);
     // },[image]);
 
-    
 
-
-
-    console.log( Student)
     return (
 
         <Container>
@@ -273,7 +300,7 @@ function CreateStudent() {
                             </Nav>
                         </Card.Header>
                         <Card.Body>
-                            <Form>
+                            <Form noValidate   validated={validated} onSubmit={handleSubmit}>
                                 <Row>
 
 
@@ -282,6 +309,7 @@ function CreateStudent() {
                                         <Form.Group className="mb-2">
                                             <Form.Label>รูปประจำตัว</Form.Label>
                                             <Form.Control type="file"
+                                                required
                                                 id="Picture"
                                                 onSubmit={formSubmit}
                                               
@@ -289,6 +317,7 @@ function CreateStudent() {
                                                 />
                                         
                                         </Form.Group>
+                       
                                         
                                     </Col>
 
@@ -301,6 +330,7 @@ function CreateStudent() {
                                         <Form.Group className="mb-2" >
                                             <Form.Label>คำนำหน้า</Form.Label>
                                             <Form.Select
+                                                required
                                                 name="ArticleID"
                                                 aria-label="Article"
                                                 onChange={handleChange}
@@ -315,6 +345,7 @@ function CreateStudent() {
 
                                             </Form.Select>
                                         </Form.Group>
+     
                                     </Col>
 
 
@@ -323,6 +354,7 @@ function CreateStudent() {
                                             <Form.Label>ชื่อจริง</Form.Label>
                                             <Form.Control type="string"
                                                 className="Form-control"
+                                                required
                                                 id="First_Name"
                                                 aria-describedby='First_Name'
                                                 value={Student.First_Name || ""}
@@ -336,6 +368,7 @@ function CreateStudent() {
                                             <Form.Label>นามสกุล</Form.Label>
                                             <Form.Control type="string"
                                                 className="Form-control"
+                                                required
                                                 id="Last_Name"
                                                 aria-describedby='Last_Name'
                                                 value={Student.Last_Name || ""}
@@ -347,6 +380,7 @@ function CreateStudent() {
                                         <Form.Group >
                                         <Form.Label>วัน</Form.Label>
                                             <Form.Control type="number"
+                                                required
                                                 className="Form-control"
                                                 id="BirthDay"
                                                 aria-describedby='BirthDayHelp'
@@ -359,25 +393,32 @@ function CreateStudent() {
                                     </Col>
 
                                     <Col xs={5}>
-                                        <Form.Group >
-                                        <Form.Label>เดือน</Form.Label>
-                                            <Form.Control type="string"
-                                                className="Form-control"
-                                                id="BirthMonth"
-                                                aria-describedby='BirthMonth'
-                                                value={Student?.BirthMonth || ""}
-                                                onChange={handleInputChange} />
+                                        <Form.Group className="mb-2" >
+                                            <Form.Label>เดือนเกิด</Form.Label>
+                                            <Form.Select
+                                                required
+                                                name="BirthMonthID"
+                                                aria-label="Month"
+                                                onChange={handleChange}
+                                            >
+                                                <option>กรุณาเลือก</option>
+                                                {Month.map((item: BirthMonthsInterface) => (
+                                                    <option value={item.ID} key={item.ID}>
+                                                        {item.Name}
+                                                    </option>
 
+                                                ))}
+
+                                            </Form.Select>
                                         </Form.Group>
                                     </Col>
-
-
-
 
                                     <Col xs={5}>
                                         <Form.Group >
                                             <Form.Label>ปีเกิด</Form.Label>
-                                            <Form.Control type="number"
+                                            <Form.Control  
+                                                required
+                                                type="number"
                                                 className="Form-control"
                                                 id="BirthYear"
                                                 aria-describedby='BirthYear'
@@ -388,10 +429,12 @@ function CreateStudent() {
                                     </Col>
 
 
-                                    <Col xs={4}>
+                                    <Col xs={6}>
                                         <Form.Group >
                                             <Form.Label>บัตรประจำตัวประชาชน</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="ID_Card"
                                                 aria-describedby='ID_Card'
@@ -403,10 +446,12 @@ function CreateStudent() {
 
 
 
-                                    <Col xs={4}>
+                                    <Col xs={6}>
                                         <Form.Group className="mb-2">
                                             <Form.Label>รหัสนักเรียน</Form.Label>
-                                            <Form.Control type="String"
+                                            <Form.Control 
+                                                required
+                                                type="String"
                                                 className="Form-control"
                                                 id="CodeID"
                                                 aria-describedby='CodeID'
@@ -422,7 +467,9 @@ function CreateStudent() {
                                     <Col xs={12}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>ที่อยู่</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="Address"
                                                 aria-describedby='AddressHelp'
@@ -437,7 +484,9 @@ function CreateStudent() {
                                     <Col xs={5}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>จังหวัด</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="Province"
                                                 aria-describedby='ProvinceHelp'
@@ -450,7 +499,9 @@ function CreateStudent() {
                                     <Col xs={3}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>รหัสไปรษณีย์</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="ZipCode"
                                                 aria-describedby='ZipCode'
@@ -465,7 +516,9 @@ function CreateStudent() {
                                     <Col xs={4}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>เบอร์ติดต่อ</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="PhoneNumber"
                                                 aria-describedby='PhoneNumberHelp'
@@ -478,7 +531,9 @@ function CreateStudent() {
                                     <Col xs={6}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>ชื่อบิดา</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="Father_Name"
                                                 aria-describedby='Father_Name'
@@ -491,7 +546,9 @@ function CreateStudent() {
                                     <Col xs={6}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>อาชีพ</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="Father_Career"
                                                 aria-describedby='Father_Career'
@@ -504,7 +561,9 @@ function CreateStudent() {
                                     <Col xs={6}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>รายได้</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="Father_income"
                                                 aria-describedby='Father_income'
@@ -516,7 +575,9 @@ function CreateStudent() {
                                     <Col xs={6}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>เบอร์ติดต่อ</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="Father_Phone"
                                                 aria-describedby='Father_Phone'
@@ -529,7 +590,9 @@ function CreateStudent() {
                                     <Col xs={6}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>ชื่อมารดา</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="Mother_Name"
                                                 aria-describedby='Mother_Name'
@@ -542,7 +605,9 @@ function CreateStudent() {
                                     <Col xs={6}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>อาชีพ</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="Mother_Career"
                                                 aria-describedby='Mother_Career'
@@ -555,7 +620,9 @@ function CreateStudent() {
                                     <Col xs={6}>
                                         <Form.Group className="mb-2" >
                                             <Form.Label>รายได้</Form.Label>
-                                            <Form.Control type="string"
+                                            <Form.Control 
+                                                required
+                                                type="string"
                                                 className="Form-control"
                                                 id="Mother_income"
                                                 aria-describedby='Mother_income'
@@ -573,7 +640,8 @@ function CreateStudent() {
                                                 id="Mother_Phone"
                                                 aria-describedby='Mother_Phone'
                                                 value={Student.Mother_Phone || ""}
-                                                onChange={handleInputChange} />
+                                                onChange={handleInputChange}
+                                                required />
 
                                         </Form.Group>
                                     </Col>
@@ -585,6 +653,7 @@ function CreateStudent() {
                                                 name="StatusFamilyID"
                                                 aria-label="StatusFamilyID"
                                                 onChange={handleChange}
+                                                required
                                             >
                                                 <option>กรุณาเลือก</option>
                                                 {StatusFamily.map((item: Status_FamiliesInterface) => (
@@ -606,7 +675,8 @@ function CreateStudent() {
                                                 id="Family_income"
                                                 aria-describedby='Family_income'
                                                 value={Student.Family_income || ""}
-                                                onChange={handleInputChange} />
+                                                onChange={handleInputChange}
+                                                required />
 
                                         </Form.Group>
                                     </Col>
@@ -622,7 +692,8 @@ function CreateStudent() {
                                                 id="Parent_Name"
                                                 aria-describedby='Parent_Name'
                                                 value={Student.Parent_Name || ""}
-                                                onChange={handleInputChange} />
+                                                onChange={handleInputChange}
+                                                required />
 
                                         </Form.Group>
                                     </Col>
@@ -635,7 +706,8 @@ function CreateStudent() {
                                                 id="Parent_Career"
                                                 aria-describedby='Parent_Career'
                                                 value={Student.Parent_Career || ""}
-                                                onChange={handleInputChange} />
+                                                onChange={handleInputChange}
+                                                required />
 
                                         </Form.Group>
                                     </Col>
@@ -648,7 +720,8 @@ function CreateStudent() {
                                                 id="Parent_Phone"
                                                 aria-describedby='Parent_Phone'
                                                 value={Student.Parent_Phone || ""}
-                                                onChange={handleInputChange} />
+                                                onChange={handleInputChange}
+                                                required />
 
                                         </Form.Group>
                                     </Col>
@@ -661,7 +734,8 @@ function CreateStudent() {
                                                 id="Parent_About"
                                                 aria-describedby='Parent_About'
                                                 value={Student.Parent_About || ""}
-                                                onChange={handleInputChange} />
+                                                onChange={handleInputChange}
+                                                required />
 
                                         </Form.Group>
                                     </Col>
@@ -698,8 +772,7 @@ function CreateStudent() {
 
                                     </Col>
                                     <Col xs={6}>
-                                        <Button style={{ float: "right" }}
-                                            onClick={submit}
+                                        <Button style={{ float: "right" }} type="submit"
                                             variant="success">ยืนยัน</Button>{' '}
 
                                     </Col>

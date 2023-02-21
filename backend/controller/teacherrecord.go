@@ -58,11 +58,11 @@ func CreateTeacherRecord(c *gin.Context) {
 
 func GetTeacherRecord(c *gin.Context) {
 
-	var teacherrecord entity.TeacherRecord
+	var teacherrecord []entity.TeacherRecord
 
 	id := c.Param("id")
 
-	if err := entity.DB().Preload("Teacher").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM teacher_records WHERE id = ?", id).Find(&teacherrecord).Error; err != nil {
+	if err := entity.DB().Preload("Teacher").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM teacher_records WHERE teacher_id = ?", id).Find(&teacherrecord).Error; err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 

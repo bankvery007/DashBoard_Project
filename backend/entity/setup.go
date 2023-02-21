@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"golang.org/x/crypto/bcrypt"
 
 	"gorm.io/gorm"
@@ -36,6 +38,9 @@ func SetupDatabase() {
 	database.AutoMigrate(&Physical_Fitness{})
 	database.AutoMigrate(&Article{})
 	database.AutoMigrate(&StatusFamily{})
+	database.AutoMigrate(&Physical_Fitness_Backup{})
+	database.AutoMigrate(&Grade{})
+	database.AutoMigrate(&BirthMonth{})
 
 	db = database
 
@@ -58,7 +63,7 @@ func SetupDatabase() {
 		PhoneNumber: "063516",
 		CodeID:      "T1111",
 		Password:    string(password),
-		BirthDay:    2553,
+		BirthYear:   2553,
 		Admin:       admin1,
 	}
 	db.Model(&Teacher{}).Create(&teacher1)
@@ -73,11 +78,72 @@ func SetupDatabase() {
 		PhoneNumber: "063516",
 		CodeID:      "T2222",
 		Password:    string(password),
-		BirthDay:    2553,
+		BirthYear:   2553,
 		Admin:       admin1,
 	}
 	db.Model(&Teacher{}).Create(&teacher2)
 
+	month1 := BirthMonth{
+		Name: "มกราคม",
+	}
+	db.Model(&BirthMonth{}).Create(&month1)
+
+	month2 := BirthMonth{
+		Name: "กุมภาพันธ์",
+	}
+	db.Model(&BirthMonth{}).Create(&month2)
+
+	month3 := BirthMonth{
+		Name: "มีนาคม",
+	}
+	db.Model(&BirthMonth{}).Create(&month3)
+
+	month4 := BirthMonth{
+		Name: "เมษายน",
+	}
+	db.Model(&BirthMonth{}).Create(&month4)
+
+	month5 := BirthMonth{
+		Name: "พฤษภาคม",
+	}
+	db.Model(&BirthMonth{}).Create(&month5)
+
+	month6 := BirthMonth{
+		Name: "กรกฎาคม",
+	}
+	db.Model(&BirthMonth{}).Create(&month6)
+
+	month7 := BirthMonth{
+		Name: "มิถุนายน",
+	}
+	db.Model(&BirthMonth{}).Create(&month7)
+
+	month8 := BirthMonth{
+		Name: "สิงหาคม",
+	}
+	db.Model(&BirthMonth{}).Create(&month8)
+
+	month9 := BirthMonth{
+		Name: "กันยายน",
+	}
+	db.Model(&BirthMonth{}).Create(&month9)
+
+	month10 := BirthMonth{
+		Name: "ตุลาคม",
+	}
+	db.Model(&BirthMonth{}).Create(&month10)
+
+	month11 := BirthMonth{
+		Name: "พฤศจิกายน",
+	}
+	db.Model(&BirthMonth{}).Create(&month11)
+
+	month12 := BirthMonth{
+		Name: "ธันวาคม",
+	}
+	db.Model(&BirthMonth{}).Create(&month12)
+
+	//StatusFamily
 	status1 := StatusFamily{
 		Name: "อยู่ด้วยกัน",
 	}
@@ -112,6 +178,7 @@ func SetupDatabase() {
 		Article:        article1,
 		First_Name:     "บุญญฤทธิ์",
 		Last_Name:      "สุขมงคล",
+		Full_Name:      "บุญญฤทธิ์ สุขมงคล",
 		ID_Card:        "1309902829428",
 		Email:          "bunyarith@gmail.com",
 		Address:        "249/190",
@@ -119,7 +186,7 @@ func SetupDatabase() {
 		ZipCode:        "3000",
 		PhoneNumber:    "063516",
 		CodeID:         "B1234",
-		BirthDay:       2553,
+		BirthYear:      2553,
 		Father_Name:    "ประหยัด สุขมงคล",
 		Father_Career:  "-",
 		Father_Phone:   "0123456789",
@@ -135,19 +202,22 @@ func SetupDatabase() {
 		Family_income:  10000,
 		StatusFamily:   status1,
 		Number_brother: 3,
+		Status:         1,
 	}
 	db.Model(&Student{}).Create(&student1)
 
 	student2 := Student{
 		First_Name:  "รินรดา",
 		Last_Name:   "วัฒน",
+		Full_Name:   "รินรดา วัฒน",
 		Email:       "bunyarith@gmail.com",
 		Address:     "249/190",
 		Province:    "โคราช",
 		ZipCode:     "3000",
 		PhoneNumber: "063516",
 		CodeID:      "B6212",
-		BirthDay:    2553,
+		BirthYear:   2553,
+		Status:      1,
 	}
 	db.Model(&Student{}).Create(&student2)
 
@@ -160,9 +230,24 @@ func SetupDatabase() {
 		ZipCode:     "3000",
 		PhoneNumber: "063516",
 		CodeID:      "B6222",
-		BirthDay:    2553,
+		BirthYear:   2553,
+		Status:      1,
 	}
 	db.Model(&Student{}).Create(&student3)
+
+	student4 := Student{
+		First_Name:  "Test0",
+		Last_Name:   "ซอยจุก",
+		Email:       "bunyarith@gmail.com",
+		Address:     "249/190",
+		Province:    "โคราช",
+		ZipCode:     "3000",
+		PhoneNumber: "063516",
+		CodeID:      "B6111",
+		BirthYear:   2553,
+		Status:      0,
+	}
+	db.Model(&Student{}).Create(&student4)
 
 	Room1 := ClassRoom{
 		Room: 1,
@@ -214,7 +299,7 @@ func SetupDatabase() {
 	StudentRecord1_2_2 := StudentRecord{
 		Student:           student1,
 		Grade:             grade2,
-		ClassRoom:         Room2,
+		ClassRoom:         Room3,
 		StudentRecordYear: 2566,
 	}
 	db.Model(&StudentRecord{}).Create(&StudentRecord1_2_2)
@@ -253,8 +338,8 @@ func SetupDatabase() {
 
 	StudentRecord3_1_1 := StudentRecord{
 		Student:           student3,
-		Grade:             grade1,
-		ClassRoom:         Room1,
+		Grade:             grade2,
+		ClassRoom:         Room2,
 		StudentRecordYear: 2565,
 	}
 	db.Model(&StudentRecord{}).Create(&StudentRecord3_1_1)
@@ -294,38 +379,41 @@ func SetupDatabase() {
 	//rin
 
 	Physical1 := Physical_Fitness{
-		Run50:         7.25,
-		Longjump:      165,
+		Run50:         7,
+		Longjump:      160,
 		SitUp:         13,
 		GripStrength:  20,
 		Wieght:        30,
 		Height:        150,
-		StudentRecord: StudentRecord2_1_2,
+		Student:       student2,
 		TeacherRecord: TeacherRecord1,
+		Created_date:  time.Now().Format("2006-01-02"),
 	}
 	db.Model(&Physical_Fitness{}).Create(&Physical1)
 
 	Physical2 := Physical_Fitness{
-		Run50:         7.25,
-		Longjump:      165,
-		SitUp:         13,
+		Run50:         7.1,
+		Longjump:      162,
+		SitUp:         15,
 		GripStrength:  20,
 		Wieght:        30,
-		Height:        150,
-		StudentRecord: StudentRecord2_2_2,
+		Height:        155,
+		Student:       student2,
 		TeacherRecord: TeacherRecord2,
+		Created_date:  time.Now().Format("2006-01-02"),
 	}
 	db.Model(&Physical_Fitness{}).Create(&Physical2)
 
 	Physical3 := Physical_Fitness{
-		Run50:         7.25,
+		Run50:         7.2,
 		Longjump:      165,
-		SitUp:         13,
+		SitUp:         16,
 		GripStrength:  20,
 		Wieght:        30,
-		Height:        150,
-		StudentRecord: StudentRecord2_3_2,
+		Height:        160,
+		Student:       student2,
 		TeacherRecord: TeacherRecord3,
+		Created_date:  time.Now().Format("2006-01-02"),
 	}
 	db.Model(&Physical_Fitness{}).Create(&Physical3)
 
@@ -338,8 +426,9 @@ func SetupDatabase() {
 		GripStrength:  20,
 		Wieght:        30,
 		Height:        150,
-		StudentRecord: StudentRecord1_1_2,
+		Student:       student1,
 		TeacherRecord: TeacherRecord1,
+		Created_date:  time.Now().Format("2006-01-02"),
 	}
 	db.Model(&Physical_Fitness{}).Create(&Physical11)
 
@@ -350,8 +439,9 @@ func SetupDatabase() {
 		GripStrength:  20,
 		Wieght:        30,
 		Height:        150,
-		StudentRecord: StudentRecord1_2_2,
+		Student:       student1,
 		TeacherRecord: TeacherRecord1,
+		Created_date:  time.Now().Format("2006-01-02"),
 	}
 	db.Model(&Physical_Fitness{}).Create(&Physical12)
 

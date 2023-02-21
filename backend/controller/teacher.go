@@ -110,6 +110,7 @@ func UpdateTeacher(c *gin.Context) {
 	newteacher.Picture = teacher.Picture
 	newteacher.First_Name = teacher.First_Name
 	newteacher.Last_Name = teacher.Last_Name
+	newteacher.Full_Name = teacher.First_Name + " " + teacher.Last_Name
 	newteacher.Email = teacher.Email
 	newteacher.Address = teacher.Address
 	newteacher.Province = teacher.Province
@@ -123,6 +124,7 @@ func UpdateTeacher(c *gin.Context) {
 		Picture:     newteacher.Picture,
 		First_Name:  newteacher.First_Name,
 		Last_Name:   newteacher.Last_Name,
+		Full_Name:   newteacher.First_Name + " " + newteacher.Last_Name,
 		PhoneNumber: newteacher.PhoneNumber,
 		Email:       newteacher.Email,
 		Address:     newteacher.Address,

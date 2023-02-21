@@ -14,7 +14,6 @@ import { toast } from 'react-toastify';
 function UpdateStudent() {
 
     const [date, setDate] = React.useState<Date | null>(null);
-
     const [Student, setStudent] = React.useState<Partial<StudentsInterface>>({});
 
     const [Article, setArticle] = React.useState<ArticlesInterface[]>([]);
@@ -24,20 +23,39 @@ function UpdateStudent() {
    
     // const [getStudents, setGetStudents] = React.useState<Partial<StudentsInterface>>({});
 
-    const [success, setSuccess] = React.useState(false);
-
-    const [error, setError] = React.useState(false);
 
     const params = useParams();
 
     const [filebase64,setFileBase64] = useState<string>(Student.Picture ?? "")
+    const [validated, setValidated] = useState(false);
+    const [error, seterror] = useState(true);
+    const handleSubmit = (event:any) => {
+        const form = event.currentTarget;
+  
+        if (form.checkValidity() === false) {
+          seterror(true)
+          event.preventDefault();
+          event.stopPropagation();
+          toast.error("กรุณากรอกข้อมูลให้ครบถ้วน") 
+        }
+        setValidated(true);
+        event.preventDefault();
+        update();
+        if (form.checkValidity() === true) {
+          toast.success("บันทึกสำเร็จ")
+          setTimeout(() => {
+              window.location.reload();
+              }
+              , 3000);
+        }
+      };
 
 
     function formSubmit(e: any) {
         e.preventDefault();
         // Submit your form with the filebase64 as 
         // one of your fields
-        console.log({filebase64})
+  
         alert("here you'd submit the form using\n the filebase64 like any other field")
       }
     
@@ -46,7 +64,7 @@ function UpdateStudent() {
         if (files) {
           const fileRef = files[0] || ""
           const fileType: string= fileRef.type || ""
-          console.log("This file upload is of type:",fileType)
+
           const reader = new FileReader()
           reader.readAsBinaryString(fileRef)
           reader.onload=(ev: any) => {
@@ -55,27 +73,6 @@ function UpdateStudent() {
           }
         }
       }
-
-
-    const handleClose = (
-
-        event?: React.SyntheticEvent | Event,
-
-        reason?: string
-
-    ) => {
-
-        if (reason === "clickaway") {
-
-            return;
-
-        }
-
-        setSuccess(false);
-
-        setError(false);
-
-    };
     
 
     const handleInputChange = (
@@ -130,7 +127,7 @@ function UpdateStudent() {
 
             CodeID: Student.CodeID ?? "",
 
-            BirthYear: typeof Student.BirthYear === "string" ? parseInt(Student.BirthYear) : Student.BirthYear,
+            BirthYear: typeof Student.BirthYear === "string" ? Number(Student.BirthYear) : Student.BirthYear,
 
             Father_Name: Student.Father_Name,
 
@@ -138,7 +135,7 @@ function UpdateStudent() {
 
             Father_Phone: Student.Father_Phone,
 
-            Father_income: typeof Student.Father_income === "string" ? parseInt(Student.Father_income) : Student.Father_income, 
+            Father_income: typeof Student.Father_income === "string" ? Number(Student.Father_income) : Student.Father_income, 
 
             Mother_Name: Student.Mother_Name,
 
@@ -146,7 +143,7 @@ function UpdateStudent() {
 
             Mother_Phone: Student.Mother_Phone,
 
-            Mother_income: typeof Student.Mother_income === "string" ? parseInt(Student.Mother_income) : Student.Mother_income, 
+            Mother_income: typeof Student.Mother_income === "string" ? Number(Student.Mother_income) : Student.Mother_income, 
 
             Parent_Name: Student.Parent_Name,
 
@@ -156,18 +153,18 @@ function UpdateStudent() {
 
             Parent_About: Student.Parent_About,
 
-            StatusFamilyID: typeof  Student.StatusFamilyID === "string" ? parseInt( Student.StatusFamilyID) : Student.StatusFamilyID,
+            StatusFamilyID: typeof  Student.StatusFamilyID === "string" ? Number( Student.StatusFamilyID) : Student.StatusFamilyID,
 
-            ArticleID: typeof  Student.ArticleID === "string" ? parseInt( Student.ArticleID) : Student.ArticleID,
+            ArticleID: typeof  Student.ArticleID === "string" ? Number( Student.ArticleID) : Student.ArticleID,
 
-            Family_income : typeof Student.Family_income === "string" ? parseInt(Student.Family_income) : Student.Family_income, 
+            Family_income : typeof Student.Family_income === "string" ? Number(Student.Family_income) : Student.Family_income, 
 
-            Number_brother: typeof Student.Number_brother === "string" ? parseInt(Student.Number_brother) : Student.Number_brother,
+            Number_brother: typeof Student.Number_brother === "string" ? Number(Student.Number_brother) : Student.Number_brother,
 
             
 
         };
-        console.log("dataupdate",data)
+
 
      
 
@@ -189,8 +186,6 @@ function UpdateStudent() {
             .then((res) => {
 
                 if (res.data) {
-
-                    toast.success("บันทึกสำเร็จ")
                 } else {
                   toast.error("บันทึกไม่สำเร็จ")
 
@@ -244,7 +239,7 @@ function UpdateStudent() {
         .then((res) => {
             if (res.data) {
                 setStudent(res.data);
-                console.log("student",res.data)
+
             } else {
             }
         });
@@ -295,7 +290,7 @@ function UpdateStudent() {
                             </Nav>
                         </Card.Header>
                         <Card.Body>
-                            <Form>
+                        <Form noValidate   validated={validated} onSubmit={handleSubmit}>
                                 <Row>
 
 
@@ -306,7 +301,7 @@ function UpdateStudent() {
                                             <Form.Control type="file"
                                                 id="Picture"
                                                 onSubmit={formSubmit}
-                                                
+                                                required
                                                 onChange={(e)=> convertFile((e.target as HTMLInputElement).files)}
                                                 />
                                     
@@ -332,6 +327,7 @@ function UpdateStudent() {
                                                 name="ArticleID"
                                                 aria-label="Article"
                                                 onChange={handleChange}
+                                                required
                                             >
                                                 
                                                 {Article.map((item: ArticlesInterface) => (
@@ -355,6 +351,7 @@ function UpdateStudent() {
                                                 id="First_Name"
                                                 aria-describedby='First_Name'
                                                 value={Student.First_Name || ""}
+                                                required
                                                 onChange={handleInputChange} />
                                         </Form.Group>
                                     </Col>
@@ -368,6 +365,7 @@ function UpdateStudent() {
                                                 id="Last_Name"
                                                 aria-describedby='Last_Name'
                                                 value={Student.Last_Name || ""}
+                                                required
                                                 onChange={handleInputChange} />
                                         </Form.Group>
                                     </Col>
@@ -383,6 +381,7 @@ function UpdateStudent() {
                                                 id="BirthYear"
                                                 aria-describedby='BirthYear'
                                                 value={Student.BirthYear || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -397,6 +396,7 @@ function UpdateStudent() {
                                                 id="ID_Card"
                                                 aria-describedby='ID_Card'
                                                 value={Student.ID_Card || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -412,6 +412,7 @@ function UpdateStudent() {
                                                 id="CodeID"
                                                 aria-describedby='CodeID'
                                                 value={Student.CodeID || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -428,6 +429,7 @@ function UpdateStudent() {
                                                 id="Address"
                                                 aria-describedby='AddressHelp'
                                                 value={Student.Address || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -443,6 +445,7 @@ function UpdateStudent() {
                                                 id="Province"
                                                 aria-describedby='ProvinceHelp'
                                                 value={Student.Province || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -456,6 +459,7 @@ function UpdateStudent() {
                                                 id="ZipCode"
                                                 aria-describedby='ZipCode'
                                                 value={Student.ZipCode || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -471,6 +475,7 @@ function UpdateStudent() {
                                                 id="PhoneNumber"
                                                 aria-describedby='PhoneNumberHelp'
                                                 value={Student.PhoneNumber || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -484,6 +489,7 @@ function UpdateStudent() {
                                                 id="Father_Name"
                                                 aria-describedby='Father_Name'
                                                 value={Student.Father_Name || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -497,6 +503,7 @@ function UpdateStudent() {
                                                 id="Father_Career"
                                                 aria-describedby='Father_Career'
                                                 value={Student.Father_Career || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -510,6 +517,7 @@ function UpdateStudent() {
                                                 id="Father_income"
                                                 aria-describedby='Father_income'
                                                 value={Student.Father_income || ""}
+                                                required
                                                 onChange={handleInputChange} />
                                         </Form.Group>
                                     </Col>
@@ -522,6 +530,7 @@ function UpdateStudent() {
                                                 id="Father_Phone"
                                                 aria-describedby='Father_Phone'
                                                 value={Student.Father_Phone || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -535,6 +544,7 @@ function UpdateStudent() {
                                                 id="Mother_Name"
                                                 aria-describedby='Mother_Name'
                                                 value={Student.Mother_Name || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -548,6 +558,7 @@ function UpdateStudent() {
                                                 id="Mother_Career"
                                                 aria-describedby='Mother_Career'
                                                 value={Student.Mother_Career || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -561,6 +572,7 @@ function UpdateStudent() {
                                                 id="Mother_income"
                                                 aria-describedby='Mother_income'
                                                 value={Student.Mother_income || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -574,6 +586,7 @@ function UpdateStudent() {
                                                 id="Mother_Phone"
                                                 aria-describedby='Mother_Phone'
                                                 value={Student.Mother_Phone || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -586,6 +599,7 @@ function UpdateStudent() {
                                                 name="StatusFamilyID"
                                                 aria-label="StatusFamilyID"
                                                 onChange={handleChange}
+                                                required
                                             >
                                                 {StatusFamily.map((item: Status_FamiliesInterface) => (
                                                     <option value={item.ID} key={item.ID}>
@@ -606,6 +620,7 @@ function UpdateStudent() {
                                                 id="Family_income"
                                                 aria-describedby='Family_income'
                                                 value={Student.Family_income || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -622,6 +637,7 @@ function UpdateStudent() {
                                                 id="Parent_Name"
                                                 aria-describedby='Parent_Name'
                                                 value={Student.Parent_Name || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -635,6 +651,7 @@ function UpdateStudent() {
                                                 id="Parent_Career"
                                                 aria-describedby='Parent_Career'
                                                 value={Student.Parent_Career || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -648,6 +665,7 @@ function UpdateStudent() {
                                                 id="Parent_Phone"
                                                 aria-describedby='Parent_Phone'
                                                 value={Student.Parent_Phone || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -661,6 +679,7 @@ function UpdateStudent() {
                                                 id="Parent_About"
                                                 aria-describedby='Parent_About'
                                                 value={Student.Parent_About || ""}
+                                                required
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
@@ -690,16 +709,25 @@ function UpdateStudent() {
 
 
                                     <Col xs={6}>
-                                        <Button
+                                        {localStorage.getItem("role") == "Admin" ? ( 
+                                            <Button
                                             style={{ float: "left" }}
                                             href="/tablestudent"
-                                            variant="secondary">กลับ</Button>{' '}
+                                            variant="secondary">กลับ</Button>
+                                        ) : (
+                                            <Button
+                                            style={{ float: "left" }}
+                                            href="/tableclassroom"
+                                            variant="secondary">กลับ</Button>
+                                        )
+                                            }
+                                        
 
 
                                     </Col>
                                     <Col xs={6}>
-                                        <Button style={{ float: "right" }}
-                                            onClick={update}
+                                        <Button style={{ float: "right" }} type="submit"
+            
                                             variant="success">ยืนยัน</Button>{' '}
 
                                     </Col>

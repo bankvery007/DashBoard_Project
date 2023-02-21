@@ -24,6 +24,8 @@ type Teacher struct {
 
 	Last_Name string
 
+	Full_Name string
+
 	Email string
 
 	Address string
@@ -40,7 +42,8 @@ type Teacher struct {
 
 	BirthDay uint
 
-	BirthMonth uint
+	BirthMonthID uint
+	BirthMonth   BirthMonth
 
 	BirthYear uint
 
@@ -59,6 +62,15 @@ type Article struct {
 	Students []Student `gorm:"foreignKey:ArticleID"`
 }
 
+type BirthMonth struct {
+	gorm.Model
+
+	Name string
+
+	Students []Student `gorm:"foreignKey:BirthMonthID"`
+	Teachers []Teacher `gorm:"foreignKey:BirthMonthID"`
+}
+
 type StatusFamily struct {
 	gorm.Model
 
@@ -70,13 +82,13 @@ type StatusFamily struct {
 type Student struct {
 	gorm.Model
 
-	ID int `json:"id"`
-
 	Picture string
 
 	First_Name string
 
 	Last_Name string
+
+	Full_Name string
 
 	ID_Card string
 
@@ -93,8 +105,6 @@ type Student struct {
 	CodeID string `gorm:"uniqueIndex"`
 
 	BirthDay uint
-
-	BirthMonth uint
 
 	BirthYear uint
 
@@ -126,6 +136,8 @@ type Student struct {
 
 	Number_brother uint
 
+	Status uint
+
 	AdminID *uint
 	Admin   Admin
 
@@ -135,8 +147,13 @@ type Student struct {
 	ArticleID *uint
 	Article   Article
 
+	BirthMonthID *uint
+	BirthMonth   BirthMonth
+
 	//1 student to many studentrecord
 	StudentRecords []StudentRecord `gorm:"foreignKey:StudentID"`
+
+	Physical_Fitness *Physical_Fitness `gorm: "foreignKey:StudentID"`
 }
 
 type ClassRoom struct {
@@ -178,8 +195,6 @@ type TeacherRecord struct {
 type StudentRecord struct {
 	gorm.Model
 
-	Status bool
-
 	StudentRecordYear uint
 
 	StudentID *uint
@@ -188,15 +203,42 @@ type StudentRecord struct {
 	GradeID *uint
 	Grade   Grade
 
-	ClassRoomID      *uint
-	ClassRoom        ClassRoom
-	Physical_Fitness *Physical_Fitness `gorm: "foreignKey:StudentRecordID"`
+	ClassRoomID *uint
+	ClassRoom   ClassRoom
 }
 
 type Physical_Fitness struct {
 	gorm.Model
 
 	Run50 float32
+
+	BMI float32
+
+	Longjump float32
+
+	SitUp uint
+
+	GripStrength float32
+
+	Wieght float32
+
+	Height uint
+
+	Created_date string
+
+	TeacherRecordID *uint
+	TeacherRecord   TeacherRecord
+
+	StudentID *uint
+	Student   Student
+}
+
+type Physical_Fitness_Backup struct {
+	gorm.Model
+
+	Run50 float32
+
+	BMI float32
 
 	Longjump float32
 
@@ -208,9 +250,11 @@ type Physical_Fitness struct {
 
 	Height float32
 
-	StudentRecordID *uint
-	StudentRecord   StudentRecord
+	Created_date string
 
 	TeacherRecordID *uint
 	TeacherRecord   TeacherRecord
+
+	StudentID *uint
+	Student   Student
 }

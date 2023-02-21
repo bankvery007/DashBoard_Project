@@ -11,6 +11,57 @@ import (
 // POST /Students
 
 func CreateStudentRecord(c *gin.Context) {
+	var student entity.Student
+	var classroom entity.ClassRoom
+	var grade entity.Grade
+	// var status entity.Student
+	var studentrecord entity.StudentRecord
+
+	if err := c.ShouldBindJSON(&studentrecord); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		return
+
+	}
+
+	if tx := entity.DB().Where("id = ?", studentrecord.StudentID).First(&student); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "student not found"})
+		return
+	}
+
+	// if tx := entity.DB().Where("status = ?", studentrecord.Student.Status).First(&status); tx.RowsAffected == 0 {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "status not found"})
+	// 	return
+	// }
+
+	if tx := entity.DB().Where("id = ?", studentrecord.GradeID).First(&grade); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "grade not found"})
+		return
+	}
+
+	if tx := entity.DB().Where("id = ?", studentrecord.ClassRoomID).First(&classroom); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "classroom not found"})
+		return
+	}
+
+	tr := entity.StudentRecord{
+		Student:           student,
+		Grade:             grade,
+		ClassRoom:         classroom,
+		StudentRecordYear: studentrecord.StudentRecordYear,
+		// status:            status,
+	}
+
+	if err := entity.DB().Create(&tr).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": tr})
+
+}
+
+func CreateStudentRecordArray(c *gin.Context) {
 
 	var payload struct {
 		GradeID           uint
@@ -71,7 +122,23 @@ func CreateStudentRecord(c *gin.Context) {
 
 }
 
-// GET /studentrecord/:id
+func GetStudentRecordArray(c *gin.Context) {
+
+	var studentrecord []entity.StudentRecord
+
+	id := c.Param("id")
+
+	if err := entity.DB().Preload("Student").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM student_records WHERE student_id = ? ", id).Find(&studentrecord).Error; err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		return
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": studentrecord})
+
+}
 
 func GetStudentRecord(c *gin.Context) {
 
@@ -79,7 +146,7 @@ func GetStudentRecord(c *gin.Context) {
 
 	id := c.Param("id")
 
-	if err := entity.DB().Preload("Student").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM student_records WHERE id = ? ", id).Find(&studentrecord).Error; err != nil {
+	if err := entity.DB().Preload("Student").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM student_records WHERE student_id = ? ", id).Find(&studentrecord).Error; err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
@@ -113,25 +180,7 @@ func GetStudentRecordfromyearandclassroom(c *gin.Context) {
 
 }
 
-func GetStudentRecordbyID(c *gin.Context) {
-
-	var studentrecord []entity.StudentRecord
-
-	studentid := c.Param("studentid")
-
-	if err := entity.DB().Preload("Student").Preload("Physical_Fitness").Raw("SELECT * FROM student_records WHERE student_id = ?", studentid).Find(&studentrecord).Error; err != nil {
-
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		return
-
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": studentrecord})
-
-}
-
-func GetStudentRecordwithPhysical(c *gin.Context) {
+func GetStudentRecordwithStudent(c *gin.Context) {
 
 	var studentrecord []entity.StudentRecord
 
@@ -141,7 +190,7 @@ func GetStudentRecordwithPhysical(c *gin.Context) {
 
 	classroomid := c.Param("classroom")
 
-	if err := entity.DB().Preload("Student").Preload("Grade").Preload("ClassRoom").Preload("Physical_Fitness").Raw("SELECT * FROM student_records WHERE student_record_year = ? AND grade_id = ? AND class_room_id = ?", year, gradeid, classroomid).Find(&studentrecord).Error; err != nil {
+	if err := entity.DB().Preload("Student").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM student_records WHERE student_record_year = ? AND grade_id = ? AND class_room_id = ?", year, gradeid, classroomid).Find(&studentrecord).Error; err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
@@ -160,6 +209,22 @@ func ListStudentRecords(c *gin.Context) {
 	var studentrecord []entity.StudentRecord
 
 	if err := entity.DB().Preload("Student").Preload("Grade").Preload("ClassRoom").Raw("SELECT * FROM student_records ORDER BY student_record_year, class_room_id ASC").Find(&studentrecord).Error; err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		return
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": studentrecord})
+
+}
+
+func ListStudentRecordYear(c *gin.Context) {
+
+	var studentrecord []entity.StudentRecord
+
+	if err := entity.DB().Preload("Student").Preload("Grade").Preload("ClassRoom").Raw("SELECT DISTINCT Max(student_record_year) FROM student_records").Find(&studentrecord).Error; err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 

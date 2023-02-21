@@ -14,12 +14,12 @@ function SignIn_Admin() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(signin),
     };
-    console.log(requestOptions)
+
     fetch(apiUrl, requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
-          console.log(res.data)
+
           localStorage.setItem("token", res.data.token);//ยืนยัน
           localStorage.setItem("uid", res.data.id);//ส่ง id มาพร้อมกับ token
           localStorage.setItem("name", res.data.name);
@@ -40,7 +40,7 @@ function SignIn_Admin() {
     const id = event.target.id as keyof typeof signin;
     const { value } = event.target;
     setSignin({ ...signin, [id]: value });
-    console.log(signin)
+
   };
 
 

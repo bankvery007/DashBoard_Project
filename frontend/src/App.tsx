@@ -9,16 +9,15 @@ import CreateStudent from './components/CreateStudent';
 import TableTeacher from './components/TableTeacher';
 import TeacherRecord from './components/TeacherRecord';
 import TableStudent from './components/TableStudent';
-import StudentRecord from './components/StudentRecord';
+import StudentRecordPromote from './components/StudentRecordPromote';
 import SignInHome from './components/SigninHome';
-import CreatePhysical from './components/CreatePhysical';
 import DashboardJump from './components/Dashboard_Jump';
 import TableClassroom from './components/TableClassroom';
 import "./App.css"
 import UpdateStudent from './components/UpdateStudent';
 import UpdateTeacher from './components/UpdateTeacher';
-
-
+import StudentReocrdCreate from './components/StudentRecordCreate';
+import TablePhysical from './components/TablePhysical';
 function App() {
 
   const [token, setToken] = React.useState<String>("");
@@ -49,11 +48,14 @@ function App() {
     <Route path="/tablestudent" element={<TableStudent/>} />
     <Route path="/tableteacher" element={<TableTeacher/>} />
     <Route path="/teacherrecord" element={<TeacherRecord/>} />
-    <Route path="/studentrecord" element={<StudentRecord/>} />
+    <Route path="/studentrecordpromote" element={<StudentRecordPromote/>} />
+    <Route path="/studentrecordcreate" element={<StudentReocrdCreate/>} />
     <Route path="/dashboard" element={<DashboardJump/>} />
     <Route path="/tableclassroom" element={<TableClassroom/>} />
     <Route path="/update-student/:id" element={<UpdateStudent />} />
     <Route path="/update-teacher/:id" element={<UpdateTeacher />} />
+    <Route path="/tablephysical" element={<TablePhysical />} />
+
 
     
    </Routes>

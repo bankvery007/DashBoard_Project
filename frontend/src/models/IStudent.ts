@@ -6,6 +6,13 @@ export interface ArticlesInterface {
 
 }
 
+export interface BirthMonthsInterface {
+
+	ID : number,
+
+	Name: string;
+}
+
 export interface Status_FamiliesInterface {
 	    
 	ID : number,
@@ -16,15 +23,16 @@ export interface Status_FamiliesInterface {
 
 export interface StudentsInterface {
     
-	ID : number,
 
-	id: number,
+	ID: number,
 
 	Picture: string;
 
 	First_Name: string;
 
 	Last_Name: string;
+
+	Full_Name: string;
 
 	ID_Card: string;
 
@@ -41,8 +49,6 @@ export interface StudentsInterface {
 	CodeID: string;
 
 	BirthYear:number;
-
-	BirthMonth:string;
 
 	BirthDay: number;
 	
@@ -72,11 +78,18 @@ export interface StudentsInterface {
 
 	StatusFamilyID:  number;
 
+	Status : number
+
 	StatusFamily:  Status_FamiliesInterface;
 
 	ArticleID: number;
 	Article:   ArticlesInterface;
+
+	BirthMonthID:	number;
+	BirthMonth:  	BirthMonthsInterface;
+
 	Family_income : number;
 
 	Number_brother: number;
+
 }

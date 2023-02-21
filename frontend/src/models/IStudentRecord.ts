@@ -7,7 +7,6 @@ import { Physical_FitnessInterface } from "./IPhysical_Fitness"
 export interface StudentRecordsInterface {
     ID: number,
     StudentRecordYear: number,
-    Status: false;
     TeacherID: number,
     Teacher: TeachersInterface,
     StudentID: number,
@@ -17,5 +16,4 @@ export interface StudentRecordsInterface {
     GradeID: number,
     Grade: GradesInterface
     Physical_Fitness : Physical_FitnessInterface
-
 }

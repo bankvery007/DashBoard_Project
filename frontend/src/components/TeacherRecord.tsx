@@ -32,25 +32,6 @@ function TeacherRecord() {
   const [error, setError] = React.useState(false);
 
 
-  const handleClose = (
-
-    event?: React.SyntheticEvent | Event,
-
-    reason?: string
-
-  ) => {
-
-    if (reason === "clickaway") {
-
-      return;
-
-    }
-
-    setSuccess(false);
-
-    setError(false);
-
-  };
 
   const handleInputChange = (
 
@@ -85,7 +66,7 @@ function TeacherRecord() {
       ...TeacherRecord,
       [name]: event.target.value,
     });
-    console.log(event.target.value);
+
 
 
   };
@@ -96,13 +77,12 @@ function TeacherRecord() {
   function submit() {
 
     let data = {
-      TeacherID: typeof TeacherRecord?.TeacherID === "string" ? parseInt(TeacherRecord?.TeacherID) : 0,
-      ClassRoomID: typeof TeacherRecord?.ClassRoomID === "string" ? parseInt(TeacherRecord?.ClassRoomID) : 0,
-      GradeID: typeof TeacherRecord?.GradeID === "string" ? parseInt(TeacherRecord?.GradeID) : 0,
-      TeacherRecordYear: typeof TeacherRecord?.TeacherRecordYear === "string" ? parseInt(TeacherRecord?.TeacherRecordYear) : 0,
+      TeacherID: typeof TeacherRecord?.TeacherID === "string" ? Number(TeacherRecord?.TeacherID) : 0,
+      ClassRoomID: typeof TeacherRecord?.ClassRoomID === "string" ? Number(TeacherRecord?.ClassRoomID) : 0,
+      GradeID: typeof TeacherRecord?.GradeID === "string" ? Number(TeacherRecord?.GradeID) : 0,
+      TeacherRecordYear: typeof TeacherRecord?.TeacherRecordYear === "string" ? Number(TeacherRecord?.TeacherRecordYear) : 0,
     };
 
-    console.log(data)
 
 
     const requestOptionsPost = {
@@ -113,7 +93,7 @@ function TeacherRecord() {
       },
       body: JSON.stringify(data),
     };
-    console.log(apiUrl)
+
 
     fetch(`${apiUrl}/teacherrecords`, requestOptionsPost)
 
@@ -147,10 +127,10 @@ function TeacherRecord() {
       .then((res) => {
         if (res.data) {
           setTeacher(res.data);
-          console.log(res.data)
+   
           // setGrade(res.data);
         } else {
-          console.log("else");
+  
         }
       });
   }
@@ -162,7 +142,7 @@ function TeacherRecord() {
         if (res.data) {
           setClassRoom(res.data);
         } else {
-          console.log("else");
+      
         }
       });
   }
@@ -178,12 +158,12 @@ function TeacherRecord() {
           setTeacherGrade(res.data);
 
         } else {
-          console.log("else");
+   
         }
       });
   }
 
-  console.log(TeacherRecord)
+
 
   useEffect(() => {
     getteacher();

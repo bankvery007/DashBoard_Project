@@ -1,3 +1,5 @@
+import { BirthMonthsInterface } from "./IStudent";
+
 export interface TeachersInterface {
     
 	ID : number,
@@ -9,6 +11,8 @@ export interface TeachersInterface {
 	First_Name: string;
 
 	Last_Name:string;
+
+	Full_Name: string;
 
 	Email :string;
 
@@ -26,7 +30,8 @@ export interface TeachersInterface {
 
 	BirthYear:number;
 
-	BirthMonth:number;
+	BirthMonthID:	number;
+	BirthMonth:  	BirthMonthsInterface;
 
 	Password: string;
 }

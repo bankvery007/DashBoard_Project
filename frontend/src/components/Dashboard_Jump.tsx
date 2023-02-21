@@ -18,6 +18,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import moment from 'moment';
 
 
 ChartJS.register(
@@ -30,120 +31,7 @@ ChartJS.register(
   Legend
 );
 
-export const optionJump = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: false,
-      text: 'ยืนกระโดดไกล',
-    },
-  },
-  scales: {
-    y: {
-      min : 100,
-      max : 200
-    }
-  }
-};
 
-export const optionRun = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: false,
-      text: 'วิ่ง 50 เมตร',
-    },
-  },
-  scales: {
-    y: {
-      min : 0,
-      max : 20
-    }
-  }
-};
-
-
-export const optionStrength = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: false,
-      text: 'แรงบีบมือที่ถนัด',
-    },
-  },
-  scales: {
-    y: {
-      min : 0,
-      max : 50
-    }
-  }
-};
-
-export const optionsitup = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: false,
-      text: 'ลุก-นั่ง 30 วินาที ',
-    },
-  },
-  scales: {
-    y: {
-      min : 0,
-      max : 30
-    }
-  }
-};
-
-export const optionWeight = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: false,
-      text: 'น้ำหนัก',
-    },
-  },
-  scales: {
-    y: {
-      min : 20,
-      max : 80
-    }
-  }
-};
-
-export const optionHieght = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: false,
-      text: 'ส่วนสูง',
-    },
-  },
-  scales: {
-    y: {
-      min : 100,
-      max : 190
-    }
-  }
-};
 
 
 function Dashboard() {
@@ -153,7 +41,128 @@ function Dashboard() {
 
   const [TeacherRecord, setTeacherRecord] = React.useState<Partial<TeacherReocrdsInterface>>({});
 
-  const [Selectstudent, setSelectstudent] = React.useState<StudentRecordsInterface[]>([]);
+  const [Selectstudent, setSelectstudent] = React.useState<Physical_FitnessInterface[]>([]);
+
+  const [jump, setjump] = useState<[]>([]);
+
+  const [height, setheight] = useState<[]>([]);
+
+  const optionJump = {
+  
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+        text: 'ยืนกระโดดไกล',
+      },
+    },
+    scales: {
+      y: {
+        min : jump.length > 0 ? 0 : 100,
+        max : 200
+      }
+    }
+  };
+  
+  const optionRun = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+        text: 'วิ่ง 50 เมตร',
+      },
+    },
+    scales: {
+      y: {
+        min : 0,
+        max : 30
+      }
+    }
+  };
+  
+  
+   const optionStrength = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+        text: 'แรงบีบมือที่ถนัด',
+      },
+    },
+    scales: {
+      y: {
+        min : 0,
+        max : 50
+      }
+    }
+  };
+  
+   const optionsitup = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+        text: 'ลุก-นั่ง 30 วินาที ',
+      },
+    },
+    scales: {
+      y: {
+        min : 0,
+        max : 30
+      }
+    }
+  };
+  
+   const optionWeight = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+        text: 'น้ำหนัก',
+      },
+    },
+    scales: {
+      y: {
+        min : 20,
+        max : 100
+      }
+    }
+  };
+  
+   const optionHieght = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: false,
+        text: 'ส่วนสูง',
+      },
+    },
+    scales: {
+      y: {
+        min : height.length > 0 ? 50 : 100,
+        max : 200
+      }
+    }
+  };
+
 
   
   
@@ -183,40 +192,65 @@ function Dashboard() {
           setTeacherRecord(res.data);
           getstudent(res.data.TeacherRecordYear, res.data.GradeID, res.data.ClassRoomID);
         } else {
-          console.log("else");
+       
         }
       });
   }
 
   const getstudent = async (teacheryear: number, teachergrade: number, teacherclassroom: number) => {
-    fetch(`${apiUrl}/studentrecordswithphysical/${teacheryear}/${teachergrade}/${teacherclassroom}`, requestOptionsget)
+    fetch(`${apiUrl}/studentrecordswithstudent/${teacheryear}/${teachergrade}/${teacherclassroom}`, requestOptionsget)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
           setStudent(res.data);
-          console.log(res.data)
         } else {
-          console.log("else");
+     
         }
       });
   }
 
   const getstudentbyid = async (studentid: number) => {
-    fetch(`${apiUrl}/studentrecordbyid/${studentid}`, requestOptionsget)
+    fetch(`${apiUrl}/physical/${studentid}`, requestOptionsget)
       .then((response) => response.json())
       .then((res) => {
         if (res.data) {
           setSelectstudent(res.data);
-          console.log(res.data)
+          getjump(studentid);
         } else {
-          console.log("else");
+
         }
       });
   }
 
-  
+  const getjump = async (studentid: number) => {
+    fetch(`${apiUrl}/physicaljump/${studentid}`, requestOptionsget)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          setjump(res.data);
+        } else {
 
-  const labels = ['ป.1', 'ป.2', 'ป.3', 'ป.4', 'ป.5', 'ป.6'];
+        }
+      });
+  }
+
+  const getheight = async (studentid: number) => {
+    fetch(`${apiUrl}/physicalheight/${studentid}`, requestOptionsget)
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.data) {
+          setheight(res.data);
+        } else {
+
+        }
+      });
+  }
+
+
+
+
+
+  const labels = Selectstudent.map(x => {return moment(x?.Created_date).format("DD/MM/YYYY")});
 
   
   const dataJump = {
@@ -224,7 +258,7 @@ function Dashboard() {
     datasets: [
       {
         label:'ยืนกระโดดไกล ',
-        data: Selectstudent.map(x => {return x.Physical_Fitness ? x.Physical_Fitness.Longjump: null}),
+        data: Selectstudent.map(x => {return x ? x?.Longjump: null}),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
@@ -237,7 +271,7 @@ function Dashboard() {
     datasets: [
       {
         label:'วิ่ง 50 เมตร',
-        data: Selectstudent.map(x => {return x.Physical_Fitness ? x.Physical_Fitness.Run50: null}),
+        data: Selectstudent.map(x => {return x ? x.Run50: null}),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
@@ -250,7 +284,7 @@ function Dashboard() {
     datasets: [
       {
         label:'แรงบีบมือที่ถนัด',
-        data: Selectstudent.map(x => {return x.Physical_Fitness ? x.Physical_Fitness.GripStrength: null}),
+        data: Selectstudent.map(x => {return x ? x.GripStrength: null}),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
@@ -264,7 +298,7 @@ function Dashboard() {
     datasets: [
       {
         label:'ลุก-นั่ง 30 วินาที',
-        data: Selectstudent.map(x => {return x.Physical_Fitness ? x.Physical_Fitness.SitUp: null}),
+        data: Selectstudent.map(x => {return x ? x.SitUp: null}),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
@@ -277,7 +311,7 @@ function Dashboard() {
     datasets: [
       {
         label:'น้ำหนัก',
-        data: Selectstudent.map(x => {return x.Physical_Fitness ? x.Physical_Fitness.Wieght: null}),
+        data: Selectstudent.map(x => {return x ? x.Wieght: null}),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
@@ -292,7 +326,7 @@ function Dashboard() {
     datasets: [
       {
         label:'ส่วนสูง',
-        data: Selectstudent.map(x => {return x.Physical_Fitness ? x.Physical_Fitness.Height: null}),
+        data: Selectstudent.map(x => {return x ? x.Height: null}),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },

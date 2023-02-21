@@ -14,13 +14,8 @@ import { toast } from 'react-toastify';
 
 function UpdateTeacher() {
 
-    const [date, setDate] = React.useState<Date | null>(null);
 
     const [Teacher, setTeacher] = React.useState<Partial<TeachersInterface>>({});
-
-    const [success, setSuccess] = React.useState(false);
-
-    const [error, setError] = React.useState(false);
 
     const params = useParams();
 
@@ -33,7 +28,7 @@ function UpdateTeacher() {
         e.preventDefault();
         // Submit your form with the filebase64 as 
         // one of your fields
-        console.log({filebase64})
+
         alert("here you'd submit the form using\n the filebase64 like any other field")
       }
     
@@ -42,7 +37,6 @@ function UpdateTeacher() {
         if (files) {
           const fileRef = files[0] || ""
           const fileType: string= fileRef.type || ""
-          console.log("This file upload is of type:",fileType)
           const reader = new FileReader()
           reader.readAsBinaryString(fileRef)
           reader.onload=(ev: any) => {
@@ -53,26 +47,6 @@ function UpdateTeacher() {
       }
 
 
-
-    const handleClose = (
-
-        event?: React.SyntheticEvent | Event,
-
-        reason?: string
-
-    ) => {
-
-        if (reason === "clickaway") {
-
-            return;
-
-        }
-
-        setSuccess(false);
-
-        setError(false);
-
-    };
 
     const handleInputChange = (
 
@@ -137,9 +111,9 @@ function UpdateTeacher() {
 
             CodeID: Teacher?.CodeID ?? "",
 
-            Password: Teacher.Password = "$2a$14$zD/Of05KXcKAYm8CeLY7KOFvAHnEHbNd9sElmWWsaQNKiTq6u6LaW",
+            Password: Teacher.Password = "",
 
-            BirthYear: typeof Teacher.BirthYear === "string" ? parseInt(Teacher.BirthYear) : 0,
+            BirthYear: typeof Teacher.BirthYear === "string" ? Number(Teacher.BirthYear) : 0,
 
       
         };
@@ -177,7 +151,7 @@ function UpdateTeacher() {
     }
 
 
-    console.log(Teacher)
+
 
     useEffect(() => {
         loadData();

@@ -1,4 +1,4 @@
-import { StudentRecordsInterface } from "./IStudentRecord";
+import { StudentsInterface } from "./IStudent";
 import { TeacherReocrdsInterface } from "./ITeacherRecord";
 
 export interface Physical_FitnessInterface {
@@ -10,16 +10,18 @@ export interface Physical_FitnessInterface {
 
   SitUp: number;
 
+  BMI: number;
+
   GripStrength: number;
 
   Wieght: number;
 
   Height: number;
 
+  Created_date: string;
 
-
-  StudentRecordID: number;
-  StudentRecord: StudentRecordsInterface;
+  StudentID: number;
+  Student: StudentsInterface;
 
   TeacherRecordID: number;
   TeacherRecord: TeacherReocrdsInterface;

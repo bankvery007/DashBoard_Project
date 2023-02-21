@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -9,26 +9,26 @@ import Button from 'react-bootstrap/Button';
 import TeacherRecord from './TeacherRecord';
 import Nav from 'react-bootstrap/Nav';
 import { toast } from 'react-toastify';
+import { BirthMonthsInterface } from '../models/IStudent';
 
 
 function CreateTeacher() {
 
-    const [date, setDate] = React.useState<Date | null>(null);
-
     const [Teacher, setTeacher] = React.useState<Partial<TeachersInterface>>({});
 
-    const [success, setSuccess] = React.useState(false);
 
-    const [error, setError] = React.useState(false);
 
     const [filebase64,setFileBase64] = useState<string>("")
+
+    const [Month,setMonth] = React.useState<BirthMonthsInterface[]>([]);
+    const apiUrl = "http://localhost:8080";
 
 
     function formSubmit(e: any) {
         e.preventDefault();
         // Submit your form with the filebase64 as 
         // one of your fields
-        console.log({filebase64})
+
         alert("here you'd submit the form using\n the filebase64 like any other field")
       }
     
@@ -37,7 +37,7 @@ function CreateTeacher() {
         if (files) {
           const fileRef = files[0] || ""
           const fileType: string= fileRef.type || ""
-          console.log("This file upload is of type:",fileType)
+
           const reader = new FileReader()
           reader.readAsBinaryString(fileRef)
           reader.onload=(ev: any) => {
@@ -47,27 +47,6 @@ function CreateTeacher() {
         }
       }
 
-
-
-    const handleClose = (
-
-        event?: React.SyntheticEvent | Event,
-
-        reason?: string
-
-    ) => {
-
-        if (reason === "clickaway") {
-
-            return;
-
-        }
-
-        setSuccess(false);
-
-        setError(false);
-
-    };
 
     const handleInputChange = (
 
@@ -82,6 +61,19 @@ function CreateTeacher() {
         setTeacher({ ...Teacher, [id]: value });
 
     };
+
+    const handleChange = (
+        event: React.ChangeEvent<{ name?: string; value: unknown }>
+    ) => {
+        const name = event.target.name as keyof typeof Teacher;
+        setTeacher({
+            ...Teacher,
+            [name]: event.target.value,
+        });
+    };
+
+
+
 
 
     function submit() {
@@ -108,13 +100,20 @@ function CreateTeacher() {
 
             Password: Teacher.Password = "$2a$14$zD/Of05KXcKAYm8CeLY7KOFvAHnEHbNd9sElmWWsaQNKiTq6u6LaW",
 
-            BirthYear: typeof Teacher.BirthYear === "string" ? parseInt(Teacher.BirthYear) : 0,
+            BirthYear: typeof Teacher.BirthYear === "string" ? Number(Teacher.BirthYear) : 0,
+
+            
+            BirthDay: typeof Teacher.BirthDay === "string" ? Number(Teacher.BirthDay) : 0,
+
+            BirthMonthID: typeof  Teacher.BirthMonthID === "string" ? Number(Teacher.BirthMonthID) : 0,
 
       
         };
 
 
-        const apiUrl = "http://localhost:8080";
+
+
+   
 
         const requestOptionsPost = {
             method: "POST",
@@ -143,11 +142,36 @@ function CreateTeacher() {
 
     }
 
-    console.log(Teacher)
+    const requestOptionsget = {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        },
+    };
+
+    const getMonth = async () => {
+        fetch(`${apiUrl}/month`, requestOptionsget)
+            .then((response) => response.json())
+            .then((res) => {
+                if (res.data) {
+                    setMonth(res.data);
+        
+                } else {
+    
+                }
+            });
+    }
+
+    useEffect(() => {
+        getMonth();
+    }, []);
 
 
 
-    // console.log('render Name', setTeacher)
+
+
+
     return (
 
         <Container>
@@ -211,14 +235,49 @@ function CreateTeacher() {
 
                                  
 
-                                    <Col xs={4}>
+                                    <Col xs={2}>
                                         <Form.Group >
-                                        <Form.Label>ปีเกิด</Form.Label>
+                                        <Form.Label>วัน</Form.Label>
+                                            <Form.Control type="number"
+                                                className="Form-control"
+                                                id="BirthDay"
+                                                aria-describedby='BirthDayHelp'
+                                                value={Teacher?.BirthDay || ""}
+                                                min={1}
+                                                max={31}
+                                                onChange={handleInputChange} />
+
+                                        </Form.Group>
+                                    </Col>
+
+                                    <Col xs={5}>
+                                        <Form.Group className="mb-2" >
+                                            <Form.Label>เดือนเกิด</Form.Label>
+                                            <Form.Select
+                                                name="BirthMonthID"
+                                                aria-label="Month"
+                                                onChange={handleChange}
+                                            >
+                                                <option>กรุณาเลือก</option>
+                                                {Month.map((item: BirthMonthsInterface) => (
+                                                    <option value={item.ID} key={item.ID}>
+                                                        {item.Name}
+                                                    </option>
+
+                                                ))}
+
+                                            </Form.Select>
+                                        </Form.Group>
+                                    </Col>
+
+                                    <Col xs={5}>
+                                        <Form.Group >
+                                            <Form.Label>ปีเกิด</Form.Label>
                                             <Form.Control type="number"
                                                 className="Form-control"
                                                 id="BirthYear"
                                                 aria-describedby='BirthYear'
-                                                value={Teacher?.BirthYear || ""}
+                                                value={Teacher.BirthYear|| "" } 
                                                 onChange={handleInputChange} />
 
                                         </Form.Group>
